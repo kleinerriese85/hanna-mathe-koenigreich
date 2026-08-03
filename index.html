@@ -1,0 +1,1240 @@
+<meta charset="utf-8">
+<title>Hannas Mathe-Königreich</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --sky-top:#2A1D5C; --sky-low:#1E1548;
+  --ink:#FFF6E3; --ink-dim:rgba(255,246,227,.62);
+  --gold:#FFC94D; --gold-deep:#D99A26;
+  --rubin:#FF7B8A; --saphir:#7FB0FF; --smaragd:#5CD695; --diamant:#9FE7FF;
+  --panel:rgba(255,255,255,.07); --line:rgba(255,255,255,.16);
+  --bad:#FF8B96;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:ui-rounded,"SF Pro Rounded","Nunito","Varela Round","Comic Sans MS",sans-serif;
+  color:var(--ink); background:var(--sky-low);
+  min-height:100dvh; -webkit-text-size-adjust:100%;
+}
+button{font-family:inherit; color:inherit; touch-action:manipulation; user-select:none; -webkit-user-select:none; cursor:pointer;}
+button:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
+.sky{position:fixed; inset:0; z-index:-3; background:linear-gradient(180deg,var(--sky-top) 0%,#251A55 55%,var(--sky-low) 100%);}
+.star{position:fixed; z-index:-2; border-radius:50%; background:#FFF3C9; opacity:.75;}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:.85}}
+
+#app{max-width:470px; margin:0 auto; padding:18px 16px 26px; min-height:100dvh; display:flex; flex-direction:column;}
+.screen{display:none;}
+.screen.active{display:flex; flex-direction:column; flex:1;}
+
+h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:6px 0 2px; text-wrap:balance; letter-spacing:.2px;}
+.sub{text-align:center; color:var(--ink-dim); margin:0 0 18px; font-size:15px;}
+.crown-lg{display:block; margin:4px auto 0; width:56px; height:44px;}
+
+.card{background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:14px 16px;}
+.rankcard{margin-bottom:16px;}
+.rankrow{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.rankname{font-size:19px; font-weight:800;}
+.gems{display:flex; align-items:center; gap:6px; font-weight:800; font-size:17px; font-variant-numeric:tabular-nums;}
+.bar{height:10px; border-radius:99px; background:rgba(255,255,255,.12); margin:10px 0 6px; overflow:hidden;}
+.bar>i{display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,var(--gold-deep),var(--gold)); transition:width .6s ease;}
+.barlabel{font-size:13px; color:var(--ink-dim);}
+.dayrow{display:flex; justify-content:space-between; gap:8px; margin-top:10px; font-size:14px; color:var(--ink-dim);}
+.dayrow b{color:var(--ink); font-variant-numeric:tabular-nums;}
+
+.modes{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:4px;}
+.mode-card{position:relative; display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:16px 14px; border-radius:20px; border:1px solid var(--line); background:var(--panel); transition:transform .12s ease; text-align:left;}
+.mode-card:active{transform:scale(.96);}
+.mode-card .mname{font-size:19px; font-weight:900;}
+.mode-card .msub{font-size:13px; color:var(--ink-dim);}
+.mode-card.school{grid-column:1/-1; border-color:rgba(255,201,77,.5); background:rgba(255,201,77,.06);}
+.gemicon{width:30px; height:30px;}
+.mbadge{position:absolute; top:12px; right:12px;}
+
+.homefoot{display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:22px;}
+.iconbtn{width:48px; height:48px; border-radius:50%; background:var(--panel); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--ink-dim); transition:transform .1s ease;}
+.iconbtn svg{width:23px; height:23px;}
+.iconbtn:active{transform:scale(.92);}
+.iconbtn.small{width:42px; height:42px; flex:none;}
+.dlginput{display:block; width:150px; margin:0 auto 16px; text-align:center; font-size:24px; letter-spacing:6px; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.08); color:var(--ink); font-family:inherit;}
+.dlginput:focus-visible{outline:3px solid var(--gold);}
+.dlgbtns{display:flex; gap:10px; justify-content:center;}
+
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;}
+.backbtn{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:9px 14px; font-size:15px; font-weight:700;}
+.topbar .ttl{font-size:18px; font-weight:900; text-align:center; flex:1; text-wrap:balance;}
+.topbar .spacer{width:64px;}
+
+.levels{display:flex; flex-direction:column; gap:11px;}
+.lvl{display:flex; align-items:center; gap:13px; padding:14px 15px; border-radius:18px; border:1px solid var(--line); background:var(--panel); transition:transform .12s ease; text-align:left; width:100%;}
+.lvl:active{transform:scale(.98);}
+.lvl .num{width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:17px; background:rgba(255,255,255,.1); flex:none;}
+.lvl .lt{font-size:16px; font-weight:800;}
+.lvl .ld{font-size:13px; color:var(--ink-dim);}
+.lvl .lcrowns{margin-left:auto; display:flex; gap:3px; flex:none;}
+.lvl.locked{opacity:.45;}
+.lvl.test{border-color:rgba(255,201,77,.55); background:rgba(255,201,77,.07);}
+.crown-s{width:19px; height:15px;}
+.crown-s.off{opacity:.25;}
+
+.playtop{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;}
+.dots{display:flex; gap:5px; flex-wrap:wrap; justify-content:center; margin:2px 0 4px;}
+.dot{width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.18);}
+.dot.cur{background:var(--ink); transform:scale(1.25);}
+.dot.right{background:var(--gold);}
+.dot.fixed{background:var(--gold); opacity:.55;}
+.dot.wrong{background:var(--bad);}
+.roundgems{display:flex; align-items:center; gap:5px; font-weight:800; font-variant-numeric:tabular-nums;}
+
+.taskwrap{position:relative; text-align:center; margin:16px 0 6px; min-height:76px;}
+.task{font-size:clamp(38px,11.5vw,54px); font-weight:900; letter-spacing:1px; font-variant-numeric:tabular-nums;}
+.task .sym{color:var(--gold); padding:0 2px;}
+.ansSlot{display:inline-block; min-width:1.5em; border-bottom:4px dashed rgba(255,201,77,.55); color:var(--ink-dim);}
+.ansSlot.filled{color:var(--ink); border-bottom-color:var(--gold);}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}45%{transform:translateX(8px)}70%{transform:translateX(-5px)}}
+.task.shake{animation:shake .4s ease;}
+.praise{position:absolute; left:0; right:0; top:-30px; font-size:21px; font-weight:900; color:var(--gold); pointer-events:none; opacity:0;}
+@keyframes pop{0%{opacity:0; transform:translateY(8px) scale(.8)}25%{opacity:1; transform:translateY(0) scale(1.08)}75%{opacity:1}100%{opacity:0; transform:translateY(-10px)}}
+.praise.show{animation:pop .8s ease forwards;}
+
+.hint{background:rgba(255,201,77,.1); border:1px solid rgba(255,201,77,.35); border-radius:16px; padding:12px 15px; font-size:16px; line-height:1.55; margin:8px 0; display:none;}
+.hint.show{display:block;}
+.hint p{margin:5px 0;}
+.hint .sol{font-size:21px; font-weight:900; color:var(--gold);}
+.blocks{display:flex; align-items:center; gap:4px; flex-wrap:wrap; margin:8px 0;}
+.rod{display:inline-block; width:13px; height:40px; border-radius:4px; background:var(--gold); opacity:.92;}
+.rod.blue{background:var(--saphir);}
+.rod.cross{background:var(--bad); opacity:.55; position:relative;}
+.rod.cross::after{content:""; position:absolute; left:-3px; right:-3px; top:50%; height:3px; background:var(--bad); transform:rotate(-18deg); border-radius:2px;}
+.one{display:inline-block; width:11px; height:11px; border-radius:50%; background:var(--gold); margin:1px;}
+.one.cross{background:var(--bad); opacity:.5;}
+.blocks .op{font-size:22px; font-weight:900; padding:0 5px;}
+.arr{display:flex; flex-direction:column; gap:3px; margin:8px 0;}
+.arow{display:flex; gap:3px;}
+.arow .one{width:9px; height:9px;}
+.gobtn{margin-top:8px; background:linear-gradient(180deg,var(--gold),var(--gold-deep)); color:#231708; border:none; border-radius:14px; padding:11px 22px; font-size:16px; font-weight:900;}
+
+.tiprow{text-align:center; margin-bottom:6px;}
+.tipbtn{background:none; border:1px solid var(--line); border-radius:99px; padding:7px 16px; font-size:14px; color:var(--ink-dim);}
+
+.numpad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:auto; padding-top:10px;}
+.key{height:clamp(54px,8.5vh,64px); border-radius:16px; border:1px solid var(--line); background:var(--panel); font-size:26px; font-weight:800; transition:transform .08s ease; font-variant-numeric:tabular-nums;}
+.key:active{transform:scale(.94); background:rgba(255,255,255,.14);}
+.key.ok{background:linear-gradient(180deg,var(--gold),var(--gold-deep)); color:#231708; border:none; font-size:28px;}
+.key.del{font-size:22px; color:var(--ink-dim);}
+
+.sumwrap{text-align:center; margin-top:16px;}
+.sumcrowns{display:flex; justify-content:center; gap:12px; margin:14px 0;}
+.crown-m{width:52px; height:41px; opacity:.22; transform:scale(.85);}
+.crown-m.won{opacity:1; transform:scale(1);}
+@keyframes crownpop{0%{transform:scale(.3); opacity:0}70%{transform:scale(1.18)}100%{transform:scale(1); opacity:1}}
+.crown-m.won.anim{animation:crownpop .5s ease forwards;}
+.sumbig{font-size:24px; font-weight:900; margin:6px 0; text-wrap:balance;}
+.sumtext{color:var(--ink-dim); font-size:15px; margin:4px 0 18px;}
+.sumbtns{display:flex; flex-direction:column; gap:10px; max-width:300px; margin:0 auto;}
+.btn{border-radius:16px; padding:14px 18px; font-size:17px; font-weight:800; border:1px solid var(--line); background:var(--panel);}
+.btn.primary{background:linear-gradient(180deg,var(--gold),var(--gold-deep)); color:#231708; border:none;}
+
+.veil{position:fixed; inset:0; background:rgba(10,6,30,.86); display:none; align-items:center; justify-content:center; z-index:50; padding:24px;}
+.veil.show{display:flex;}
+.veilcard{background:#241A52; border:1px solid var(--line); border-radius:24px; padding:28px 24px; text-align:center; max-width:330px;}
+.veilcard h2{margin:10px 0 6px; font-size:24px; text-wrap:balance;}
+.veilcard p{color:var(--ink-dim); margin:0 0 18px; font-size:15px;}
+
+.confetti{position:fixed; top:-16px; width:10px; height:14px; border-radius:3px; z-index:60; pointer-events:none;}
+@keyframes confFall{to{transform:translateY(112vh) rotate(680deg); opacity:.7;}}
+
+.lsText{font-size:17px; line-height:1.5; margin:10px 2px; min-height:50px;}
+.lsStage{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:16px; min-height:150px; padding:16px;}
+.lsControls{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:14px 0 6px;}
+.bigbtn{border-radius:16px; border:1px solid var(--line); background:var(--panel); padding:13px 20px; font-size:18px; font-weight:800; transition:transform .1s ease;}
+.bigbtn:active{transform:scale(.95);}
+.bigbtn.wrongflash{animation:shake .4s ease; border-color:var(--bad);}
+.lsHaptic{font-size:14px; color:var(--gold); background:rgba(255,201,77,.08); border:1px dashed rgba(255,201,77,.4); border-radius:12px; padding:10px 13px; line-height:1.5; margin:4px 0 10px;}
+.lsHaptic:empty{display:none;}
+.rod.big{width:18px; height:56px;}
+.one.big{width:16px; height:16px;}
+.one.blue{background:var(--saphir);}
+.rod.clickable,.one.clickable{cursor:pointer;}
+.rod.gone{opacity:.12; transform:scale(.25); transition:all .45s ease;}
+@keyframes popin{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.pop{animation:popin .5s ease;}
+.tf{display:grid; grid-template-columns:repeat(5,26px); grid-template-rows:repeat(2,26px); gap:5px; padding:8px; border:2px solid var(--line); border-radius:10px;}
+.slot{width:26px; height:26px; border:1.5px dashed rgba(255,255,255,.3); border-radius:50%; display:flex; align-items:center; justify-content:center;}
+.buildnum{font-size:32px; font-weight:900; font-variant-numeric:tabular-nums; width:100%; text-align:center; margin-top:4px;}
+.buildnum .tz{color:var(--gold);}
+.stagegroup{display:flex; flex-direction:column; align-items:center; gap:6px;}
+.stagegroup .glabel{font-size:12.5px; color:var(--ink-dim);}
+.blockrow{display:flex; align-items:flex-end; gap:5px; flex-wrap:wrap; justify-content:center; max-width:220px; min-height:16px;}
+.bridge{display:flex; align-items:center; gap:8px; font-weight:800; font-size:17px; flex-wrap:wrap; justify-content:center;}
+.bridge .bnum{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:8px 14px;}
+.bridge .bnum.gold{border-color:var(--gold); color:var(--gold);}
+.bridge .bstep{color:var(--saphir); font-size:14px;}
+
+.ptable{width:100%; border-collapse:collapse; font-size:14px; margin:10px 0 4px;}
+.ptable th{text-align:left; color:var(--ink-dim); font-weight:700; padding:6px 4px; border-bottom:1px solid var(--line); font-size:12.5px;}
+.ptable td{padding:7px 4px; border-bottom:1px solid rgba(255,255,255,.07); font-variant-numeric:tabular-nums;}
+.weakchips{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0;}
+.wchip{background:rgba(255,139,150,.14); border:1px solid rgba(255,139,150,.4); border-radius:99px; padding:6px 13px; font-size:14px; font-weight:700; font-variant-numeric:tabular-nums;}
+.pnote{font-size:14px; color:var(--ink-dim); line-height:1.55;}
+.pnote b{color:var(--ink);}
+.codebox{width:100%; margin-top:10px; background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:12px; color:var(--ink); font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; padding:9px 11px; word-break:break-all; resize:vertical;}
+.codebox:focus-visible{outline:3px solid var(--gold);}
+.danger{color:var(--bad); border-color:rgba(255,139,150,.4);}
+.psec{margin-bottom:14px;}
+
+@media (prefers-reduced-motion: reduce){
+  .star, .task.shake, .praise.show, .crown-m.won.anim, .confetti, .pop{animation:none !important;}
+  .praise.show{opacity:1;}
+}
+</style>
+
+<div class="sky"></div>
+
+<div id="app">
+
+  <!-- ================= HOME ================= -->
+  <section class="screen active" id="screen-home">
+    <svg class="crown-lg" viewBox="0 0 24 19" aria-hidden="true"><path d="M2 15 L3.2 5.5 L8 9.5 L12 3 L16 9.5 L20.8 5.5 L22 15 Z" fill="#FFC94D"/><rect x="2.6" y="15.8" width="18.8" height="2.6" rx="1.2" fill="#D99A26"/></svg>
+    <h1>Hannas Mathe-Königreich</h1>
+    <p class="sub">Dein Weg zur Mathe-Königin</p>
+
+    <div class="card rankcard">
+      <div class="rankrow">
+        <span class="rankname" id="rankName">Burgfräulein</span>
+        <span class="gems"><svg class="gemicon" viewBox="0 0 24 24" width="20" height="20"><polygon points="12,2 20,9 12,22 4,9" fill="#FFC94D"/></svg><span id="gemTotal">0</span></span>
+      </div>
+      <div class="bar"><i id="rankBar" style="width:0%"></i></div>
+      <div class="barlabel" id="rankNext">Sammle Kronjuwelen!</div>
+      <div class="dayrow">
+        <span>Heute: <b id="dayCount">0</b> / 20 Juwelen</span>
+        <span>Kronen-Serie: <b id="streakCount">0</b> Tage</span>
+      </div>
+    </div>
+
+    <div class="modes">
+      <button class="mode-card" data-mode="plus" style="border-color:rgba(255,123,138,.5)">
+        <svg class="gemicon" viewBox="0 0 24 24"><polygon points="12,2 20,9 12,22 4,9" fill="#FF7B8A"/><polyline points="4,9 12,11 20,9" fill="none" stroke="#120B30" stroke-width="1" opacity=".35"/></svg>
+        <span class="mname">Plus</span><span class="msub">Der Rubin-Weg</span><span class="mbadge"></span>
+      </button>
+      <button class="mode-card" data-mode="minus" style="border-color:rgba(127,176,255,.5)">
+        <svg class="gemicon" viewBox="0 0 24 24"><polygon points="12,2 20,9 12,22 4,9" fill="#7FB0FF"/><polyline points="4,9 12,11 20,9" fill="none" stroke="#120B30" stroke-width="1" opacity=".35"/></svg>
+        <span class="mname">Minus</span><span class="msub">Der Saphir-Weg</span><span class="mbadge"></span>
+      </button>
+      <button class="mode-card" data-mode="mal" style="border-color:rgba(92,214,149,.5)">
+        <svg class="gemicon" viewBox="0 0 24 24"><polygon points="12,2 20,9 12,22 4,9" fill="#5CD695"/><polyline points="4,9 12,11 20,9" fill="none" stroke="#120B30" stroke-width="1" opacity=".35"/></svg>
+        <span class="mname">Mal</span><span class="msub">Der Smaragd-Weg</span><span class="mbadge"></span>
+      </button>
+      <button class="mode-card" data-mode="mix" style="border-color:rgba(159,231,255,.5)">
+        <svg class="gemicon" viewBox="0 0 24 24"><polygon points="12,2 20,9 12,22 4,9" fill="#9FE7FF"/><polyline points="4,9 12,11 20,9" fill="none" stroke="#120B30" stroke-width="1" opacity=".35"/></svg>
+        <span class="mname">Königs-Mix</span><span class="msub">Alles durcheinander!</span>
+      </button>
+      <button class="mode-card school" id="btnSchool">
+        <svg class="gemicon" viewBox="0 0 24 24" fill="none" stroke="#FFC94D" stroke-width="2" stroke-linejoin="round"><path d="M12 5.5C10 4 7.5 3.5 4 3.5v14c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2v-14c-3.5 0-6 .5-8 2z"/><path d="M12 5.5v14" stroke-linecap="round"/></svg>
+        <span class="mname">Zahlen-Zauberschule</span><span class="msub" id="schoolSub">Erst begreifen, dann rechnen</span><span class="mbadge"></span>
+      </button>
+    </div>
+
+    <div class="homefoot">
+      <button class="iconbtn" id="btnParents" aria-label="Elternbereich (mit Code)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.4"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1"/></svg>
+      </button>
+      <button class="iconbtn" id="btnSound" aria-label="Ton an oder aus"></button>
+    </div>
+  </section>
+
+  <!-- ================= LEVELS ================= -->
+  <section class="screen" id="screen-levels">
+    <div class="topbar">
+      <button class="backbtn" data-back="home">‹ Burg</button>
+      <span class="ttl" id="levelTitle">Wähle dein Level</span>
+      <span class="spacer"></span>
+    </div>
+    <div class="levels" id="levelList"></div>
+  </section>
+
+  <!-- ================= PLAY ================= -->
+  <section class="screen" id="screen-play">
+    <div class="playtop">
+      <button class="backbtn" id="btnQuit">‹ Stopp</button>
+      <span class="ttl" id="playTitle"></span>
+      <span class="roundgems"><svg viewBox="0 0 24 24" width="17" height="17"><polygon points="12,2 20,9 12,22 4,9" fill="#FFC94D"/></svg><span id="roundGems">0</span></span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="taskwrap">
+      <div class="praise" id="praise"></div>
+      <div class="task" id="task"></div>
+    </div>
+    <div class="tiprow"><button class="tipbtn" id="btnHint">Tipp anzeigen</button></div>
+    <div class="hint" id="hintPanel"></div>
+    <div class="numpad" id="numpad">
+      <button class="key" data-d="1">1</button><button class="key" data-d="2">2</button><button class="key" data-d="3">3</button>
+      <button class="key" data-d="4">4</button><button class="key" data-d="5">5</button><button class="key" data-d="6">6</button>
+      <button class="key" data-d="7">7</button><button class="key" data-d="8">8</button><button class="key" data-d="9">9</button>
+      <button class="key del" id="keyDel" aria-label="Löschen">⌫</button><button class="key" data-d="0">0</button><button class="key ok" id="keyOk" aria-label="Prüfen">✓</button>
+    </div>
+  </section>
+
+  <!-- ================= SUMMARY ================= -->
+  <section class="screen" id="screen-summary">
+    <div class="sumwrap">
+      <div class="sumcrowns" id="sumCrowns"></div>
+      <div class="sumbig" id="sumBig"></div>
+      <div class="sumtext" id="sumText"></div>
+      <div class="sumbtns">
+        <button class="btn primary" id="btnAgain">Nochmal spielen</button>
+        <button class="btn" id="btnNextLvl" style="display:none">Nächstes Level ›</button>
+        <button class="btn" id="btnSchoolHint" style="display:none">Den Trick in der Zauberschule ansehen</button>
+        <button class="btn" id="btnHome2">Zurück zur Burg</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCHOOL ================= -->
+  <section class="screen" id="screen-school">
+    <div class="topbar">
+      <button class="backbtn" data-back="home">‹ Burg</button>
+      <span class="ttl">Zahlen-Zauberschule</span>
+      <span class="spacer"></span>
+    </div>
+    <div class="levels" id="schoolList"></div>
+    <p class="pnote" style="margin-top:14px">Hol dir deine Zehnerstangen und Einerwürfel dazu — in jeder Lektion steht, was du damit auf dem Tisch baust!</p>
+  </section>
+
+  <!-- ================= LESSON ================= -->
+  <section class="screen" id="screen-lesson">
+    <div class="topbar">
+      <button class="backbtn" id="btnLessonBack">‹ Schule</button>
+      <span class="ttl" id="lsTitle"></span>
+      <button class="iconbtn small" id="btnSpeak" aria-label="Vorlesen"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="dots" id="lsDots"></div>
+    <p class="lsText" id="lsText"></p>
+    <div class="lsStage card" id="lsStage"></div>
+    <div class="lsControls" id="lsControls"></div>
+    <p class="lsHaptic" id="lsHaptic"></p>
+    <div style="text-align:center; margin-top:auto; padding-top:10px"><button class="btn primary" id="lsNext" style="display:none">Weiter ›</button></div>
+  </section>
+
+  <!-- ================= PARENTS ================= -->
+  <section class="screen" id="screen-parents">
+    <div class="topbar">
+      <button class="backbtn" data-back="home">‹ Zurück</button>
+      <span class="ttl">Für Papa &amp; Mama</span>
+      <span class="spacer"></span>
+    </div>
+    <div class="card psec">
+      <p class="pnote"><b>So ist das Spiel aufgebaut:</b> Jeder Weg hat 5 Level, die aufeinander aufbauen. Ein neues Level öffnet sich ab 2 Kronen (7 von 10 richtig). Hat sie in allen 5 Leveln eines Wegs 2 Kronen, wartet die <b>Prüfung</b>: 12 Aufgaben quer durch den Weg, ohne Tipps, bestanden ab 10 richtigen — so wird das Gelernte nochmal bestätigt. Empfohlener Einstieg: <b>Minus Level 1–2</b> (der Zehner-Sprung, z.&nbsp;B. 57&nbsp;−&nbsp;20) und <b>Mal Level 1</b>. Tagesziel sind 20 Juwelen — das sind etwa 2 Runden, also 10–15 Minuten.</p>
+    </div>
+    <div class="card psec">
+      <p class="pnote"><b>Rechenwege, die das Spiel zeigt</b> (so hilfst du beim Üben mit denselben Worten): Bei 57&nbsp;−&nbsp;20 ändern sich nur die Zehner: 5&nbsp;Zehner&nbsp;−&nbsp;2&nbsp;Zehner&nbsp;=&nbsp;3&nbsp;Zehner, die 7 Einer bleiben → 37. Bei 47&nbsp;+&nbsp;6 geht es über die Zehnerbrücke: erst +3 bis 50, dann +3. Beim Einmaleins: 7&nbsp;·&nbsp;4 heißt 7-mal die 4.</p>
+    </div>
+    <div class="card psec">
+      <p class="pnote"><b>Mit euren Zehnerblöcken am Tisch</b> (gleiche Bilder wie im Spiel): 1.&nbsp;<b>Zahlen bauen:</b> Du nennst eine Zahl (z.&nbsp;B. 43), Hanna legt sie mit Stangen und Würfeln — danach andersrum: du legst, sie nennt die Zahl. 2.&nbsp;<b>Zehner-Zauber:</b> Sie legt 57, du sagst „minus 20" — sie nimmt 2 Stangen weg. Danach immer fragen: „Was ist mit den Einern passiert?" (Nichts!) 3.&nbsp;<b>Tauschen:</b> 10 Einerwürfel gegen 1 Stange tauschen und zurück — dieses Tauschen ist genau die Zehnerbrücke aus Level 4. Erst am Tisch, dann im Spiel, mit denselben Wörtern („Nur die Zehner tanzen, die Einer bleiben sitzen").</p>
+    </div>
+    <div class="card psec">
+      <p class="pnote"><b>Fortschritt pro Level</b> (richtig im ersten Versuch):</p>
+      <table class="ptable"><thead><tr><th>Level</th><th>Aufgaben</th><th>Quote</th></tr></thead><tbody id="statsBody"></tbody></table>
+    </div>
+    <div class="card psec">
+      <p class="pnote"><b>Einmaleins-Übungsschatz</b> — diese Aufgaben übt das Spiel gerade besonders oft:</p>
+      <div class="weakchips" id="weakList"></div>
+    </div>
+    <div class="card psec">
+      <p class="pnote" id="syncInfo"></p>
+      <p class="pnote" style="margin-top:8px"><b>Spielstand übertragen</b> (Notfall-Weg, funktioniert immer): Am alten Gerät „Code erzeugen" und kopieren, am neuen Gerät einfügen und „Code einlesen". Beide Stände werden sicher verschmolzen — Fortschritt kann dabei nie verloren gehen.</p>
+      <div class="dlgbtns" style="justify-content:flex-start; margin-top:8px">
+        <button class="btn" id="btnExport">Code erzeugen</button>
+        <button class="btn" id="btnImport">Code einlesen</button>
+      </div>
+      <textarea class="codebox" id="codeBox" rows="3" spellcheck="false" placeholder="Hier erscheint der Code — oder füge hier einen Code zum Einlesen ein."></textarea>
+      <p class="pnote" style="margin-top:8px"><b>Tipp fürs iPad:</b> In Safari „Teilen → Zum Home-Bildschirm". Als Homescreen-App löscht iOS den Spielstand nicht mehr nach 7 Tagen Pause.</p>
+    </div>
+    <button class="btn danger" id="btnReset">Allen Fortschritt löschen</button>
+  </section>
+
+</div>
+
+<!-- Celebration overlay -->
+<div class="veil" id="veil">
+  <div class="veilcard">
+    <svg class="crown-lg" viewBox="0 0 24 19"><path d="M2 15 L3.2 5.5 L8 9.5 L12 3 L16 9.5 L20.8 5.5 L22 15 Z" fill="#FFC94D"/><rect x="2.6" y="15.8" width="18.8" height="2.6" rx="1.2" fill="#D99A26"/></svg>
+    <h2 id="veilTitle"></h2>
+    <p id="veilText"></p>
+    <button class="btn primary" id="veilBtn">Weiter</button>
+  </div>
+</div>
+
+<div class="veil" id="dlg">
+  <div class="veilcard">
+    <h2 id="dlgTitle"></h2>
+    <p id="dlgText"></p>
+    <input class="dlginput" id="dlgInput" type="password" inputmode="numeric" maxlength="8" aria-label="Code">
+    <div class="dlgbtns">
+      <button class="btn" id="dlgCancel">Abbrechen</button>
+      <button class="btn primary" id="dlgOk">Ja</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s);};
+var ri=function(a,b){return a+Math.floor(Math.random()*(b-a+1));};
+var pick=function(arr){return arr[ri(0,arr.length-1)];};
+var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var GOAL=20;
+
+function dstr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function todayStr(){return dstr(new Date());}
+function yesterdayStr(){var d=new Date();d.setDate(d.getDate()-1);return dstr(d);}
+
+/* ---------- State ---------- */
+var KEY='hannah-mathe-v1';
+var DEFAULT={gems:0,crowns:{plus:[0,0,0,0,0],minus:[0,0,0,0,0],mal:[0,0,0,0,0]},master:{plus:false,minus:false,mal:false},school:[false,false,false],weak:{},stats:{},daily:{date:'',count:0},streak:0,lastCrownDate:'',sound:true};
+function load(){try{var raw=localStorage.getItem(KEY);return raw?JSON.parse(raw):null;}catch(e){return null;}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){} syncPush();}
+var state=(function(){var s=load();var base=JSON.parse(JSON.stringify(DEFAULT));if(!s)return base;
+  for(var k in base){if(s[k]!==undefined)base[k]=s[k];}
+  ['plus','minus','mal'].forEach(function(m){if(!base.crowns[m])base.crowns[m]=[0,0,0,0,0];});
+  return base;})();
+
+var RANKS=[{n:'Burgfräulein',min:0},{n:'Hofdame',min:60},{n:'Ritterin',min:150},{n:'Prinzessin',min:300},{n:'Mathe-Königin',min:550}];
+function rankIdx(g){var i=0;for(var j=0;j<RANKS.length;j++){if(g>=RANKS[j].min)i=j;}return i;}
+
+/* ---------- Cloud-Sync (optional, via spielstand.php auf demselben Server) ---------- */
+var SYNC={url:'spielstand.php',on:false,timer:null};
+function mergeStates(a,b){
+  if(!a)return b; if(!b)return a;
+  var m=JSON.parse(JSON.stringify(DEFAULT));
+  m.gems=Math.max(a.gems||0,b.gems||0);
+  ['plus','minus','mal'].forEach(function(k){
+    for(var i=0;i<5;i++)m.crowns[k][i]=Math.max(((a.crowns||{})[k]||[])[i]||0,((b.crowns||{})[k]||[])[i]||0);
+    m.master[k]=!!(((a.master||{})[k])||((b.master||{})[k]));
+  });
+  for(var i2=0;i2<3;i2++)m.school[i2]=!!(((a.school||[])[i2])||((b.school||[])[i2]));
+  m.streak=Math.max(a.streak||0,b.streak||0);
+  m.lastCrownDate=((a.lastCrownDate||'')>(b.lastCrownDate||''))?(a.lastCrownDate||''):(b.lastCrownDate||'');
+  var ad=a.daily||{date:'',count:0},bd=b.daily||{date:'',count:0};
+  if(ad.date===bd.date)m.daily={date:ad.date,count:Math.max(ad.count||0,bd.count||0)};
+  else m.daily=((ad.date||'')>(bd.date||''))?ad:bd;
+  var wk={};
+  Object.keys(a.weak||{}).forEach(function(k){wk[k]=a.weak[k];});
+  Object.keys(b.weak||{}).forEach(function(k){wk[k]=Math.max(wk[k]||0,b.weak[k]);});
+  m.weak=wk;
+  var stt={};
+  Object.keys(a.stats||{}).forEach(function(k){stt[k]=a.stats[k];});
+  Object.keys(b.stats||{}).forEach(function(k){if(!stt[k]||(b.stats[k].tries||0)>(stt[k].tries||0))stt[k]=b.stats[k];});
+  m.stats=stt;
+  m.sound=a.sound!==undefined?a.sound:true;
+  return m;
+}
+function syncPull(){
+  try{
+    var ctrl=('AbortController' in window)?new AbortController():null;
+    var to=ctrl?setTimeout(function(){ctrl.abort();},4000):null;
+    fetch(SYNC.url,{signal:ctrl?ctrl.signal:undefined,cache:'no-store'}).then(function(r){
+      if(to)clearTimeout(to);
+      if(!r.ok)throw 0;
+      return r.json();
+    }).then(function(remote){
+      SYNC.on=true;
+      if(remote&&typeof remote.gems==='number'){
+        var localSound=state.sound;
+        state=mergeStates(state,remote);
+        state.sound=localSound;
+        save();
+        if($('#screen-home').classList.contains('active'))renderHome();
+      }else{
+        syncPush();
+      }
+      updateSyncInfo();
+    }).catch(function(){SYNC.on=false;updateSyncInfo();});
+  }catch(e){}
+}
+function syncPush(){
+  if(!SYNC.on)return;
+  clearTimeout(SYNC.timer);
+  SYNC.timer=setTimeout(function(){
+    try{
+      fetch(SYNC.url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state)}).catch(function(){});
+    }catch(e){}
+  },1200);
+}
+function updateSyncInfo(){
+  var el=$('#syncInfo');
+  if(!el)return;
+  el.innerHTML=SYNC.on
+    ?'<b>✓ Cloud-Speicher aktiv.</b> iPad, Handy &amp; Co. teilen sich den Spielstand automatisch — einfach überall dieselbe Adresse öffnen.'
+    :'<b>Cloud-Speicher nicht aktiv:</b> Der Fortschritt liegt nur auf diesem Gerät. Liegt die Datei <b>spielstand.php</b> mit auf dem Server, verbinden sich alle Geräte automatisch.';
+}
+
+/* ---------- Content ---------- */
+var MODES={plus:{name:'Plus',sym:'+'},minus:{name:'Minus',sym:'−'},mal:{name:'Mal',sym:'·'},mix:{name:'Königs-Mix'}};
+var LEVEL_META={
+ plus:[{t:'Zehnertürme',d:'30 + 20'},{t:'Der Zehner-Sprung',d:'57 + 20'},{t:'Flinke Einer',d:'43 + 5'},{t:'Über die Zehnerbrücke',d:'47 + 6'},{t:'Große Schatzsuche',d:'34 + 23'}],
+ minus:[{t:'Zehner weg!',d:'50 − 20'},{t:'Rückwärts-Zehner-Sprung',d:'57 − 20'},{t:'Einer stibitzen',d:'48 − 5'},{t:'Rückwärts über die Brücke',d:'52 − 7'},{t:'Drachen-Rechnen',d:'65 − 23'}],
+ mal:[{t:'Die leichten Freunde',d:'1er · 2er · 10er'},{t:'Die 5er-Bande',d:'5er, dazu 2er + 10er'},{t:'3er & 4er',d:'Neue Reihen'},{t:'6er & 8er',d:'Verdoppeln hilft'},{t:'Königsdisziplin',d:'7er & 9er'}]
+};
+var MAL_TABLES=[[1,2,10],[5,5,5,2,10],[3,3,4,4,5],[6,6,8,8,4],[7,7,9,9,8,6]];
+var TEST_META={plus:{t:'Rubin-Prüfung',weg:'Rubin-Wegs'},minus:{t:'Saphir-Prüfung',weg:'Saphir-Wegs'},mal:{t:'Smaragd-Prüfung',weg:'Smaragd-Wegs'}};
+var PRAISE=['Königlich!','Funkelnd richtig!','Kronjuwel für dich!','Zack — richtig!','Die Krone rückt näher!','Super, Hanna!'];
+
+function malKey(a,b){return Math.min(a,b)+'x'+Math.max(a,b);}
+function pickWeak(tables){
+  var keys=Object.keys(state.weak).filter(function(k){
+    var p=k.split('x').map(Number);
+    return tables.indexOf(p[0])>=0||tables.indexOf(p[1])>=0;
+  });
+  if(!keys.length)return null;
+  var pool=[];keys.forEach(function(k){for(var i=0;i<state.weak[k];i++)pool.push(k);});
+  var k=pool[ri(0,pool.length-1)];var p=k.split('x').map(Number);
+  return Math.random()<0.5?{a:p[0],b:p[1]}:{a:p[1],b:p[0]};
+}
+function mk(mode,lvl,a,sym,b,ans){return {mode:mode,lvl:lvl,a:a,sym:sym,b:b,ans:ans,attempts:0,revealed:false,tried:false,isBase:true,st:'pending'};}
+function genTask(mode,lvl){
+  var a,b,aT,bT,aO;
+  if(mode==='plus'){
+    if(lvl===0){aT=ri(1,8);bT=ri(1,9-aT);a=aT*10;b=bT*10;}
+    else if(lvl===1){aT=ri(1,7);bT=ri(1,8-aT);a=aT*10+ri(1,9);b=bT*10;}
+    else if(lvl===2){aO=ri(1,8);a=ri(1,8)*10+aO;b=ri(1,9-aO);}
+    else if(lvl===3){aO=ri(1,9);a=ri(1,8)*10+aO;b=ri(Math.max(1,10-aO),9);}
+    else{aT=ri(1,6);bT=ri(1,7-aT);a=aT*10+ri(1,9);b=bT*10+ri(1,9);}
+    return mk(mode,lvl,a,'+',b,a+b);
+  }
+  if(mode==='minus'){
+    if(lvl===0){aT=ri(2,9);bT=ri(1,aT-1);a=aT*10;b=bT*10;}
+    else if(lvl===1){aT=ri(2,9);a=aT*10+ri(1,9);b=ri(1,aT-1)*10;}
+    else if(lvl===2){aO=ri(2,9);a=ri(1,9)*10+aO;b=ri(1,aO-1);}
+    else if(lvl===3){aO=ri(1,8);a=ri(2,9)*10+aO;b=ri(aO+1,9);}
+    else{aT=ri(3,9);bT=ri(1,aT-1);a=aT*10+ri(1,9);b=bT*10+ri(1,9);}
+    return mk(mode,lvl,a,'−',b,a-b);
+  }
+  var tables=MAL_TABLES[lvl],f1,f2;
+  var wk=Math.random()<0.3?pickWeak(tables):null;
+  if(wk){f1=wk.a;f2=wk.b;}
+  else{var t=pick(tables);var kk=ri(1,10);if(Math.random()<0.5){f1=t;f2=kk;}else{f1=kk;f2=t;}}
+  return mk('mal',lvl,f1,'·',f2,f1*f2);
+}
+function unlocked(m,i){return i===0||state.crowns[m][i-1]>=2;}
+function genMix(){
+  var opts=[];
+  ['plus','minus','mal'].forEach(function(m){for(var i=0;i<5;i++){if(unlocked(m,i))opts.push([m,i]);}});
+  var o=pick(opts);return genTask(o[0],o[1]);
+}
+
+/* ---------- Sounds ---------- */
+var AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}return AC;}
+function tone(f,at,dur,type,gain){
+  var c=ac();if(!c||!state.sound)return;
+  if(c.state==='suspended')c.resume();
+  var o=c.createOscillator(),g=c.createGain();
+  o.type=type||'sine';o.frequency.value=f;
+  g.gain.setValueAtTime(0.0001,c.currentTime+at);
+  g.gain.exponentialRampToValueAtTime(gain||0.16,c.currentTime+at+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+at+dur);
+  o.connect(g);g.connect(c.destination);
+  o.start(c.currentTime+at);o.stop(c.currentTime+at+dur+0.05);
+}
+function sCorrect(){tone(660,0,0.14);tone(880,0.12,0.22);}
+function sWrong(){tone(196,0,0.28,'triangle',0.1);}
+function sFanfare(){[523,659,784,1047].forEach(function(f,i){tone(f,i*0.13,0.3);});}
+
+/* ---------- Screens ---------- */
+function show(id){
+  if(window.speechSynthesis){try{speechSynthesis.cancel();}catch(e){}}
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  $('#'+id).classList.add('active');
+}
+
+/* ---------- Home ---------- */
+function renderHome(){
+  var idx=rankIdx(state.gems);
+  $('#rankName').textContent=RANKS[idx].n;
+  $('#gemTotal').textContent=state.gems;
+  if(idx<RANKS.length-1){
+    var lo=RANKS[idx].min,hi=RANKS[idx+1].min;
+    $('#rankBar').style.width=Math.min(100,Math.round((state.gems-lo)/(hi-lo)*100))+'%';
+    $('#rankNext').textContent='Noch '+(hi-state.gems)+' Juwelen bis '+RANKS[idx+1].n;
+  }else{
+    $('#rankBar').style.width='100%';
+    $('#rankNext').textContent='Du trägst die Krone! Bleib in Übung, Königin Hanna.';
+  }
+  $('#dayCount').textContent=(state.daily.date===todayStr())?state.daily.count:0;
+  $('#streakCount').textContent=state.streak;
+  document.querySelectorAll('.mode-card').forEach(function(btn){
+    var mb=btn.querySelector('.mbadge');
+    if(mb)mb.innerHTML=state.master[btn.dataset.mode]?crownS.replace('CLS',''):'';
+  });
+  var sdone=state.school.filter(Boolean).length;
+  $('#schoolSub').textContent=sdone===3?'Alle Lektionen geschafft!':(sdone>0?sdone+' von 3 Lektionen geschafft':'Erst begreifen, dann rechnen');
+  $('#btnSchool .mbadge').innerHTML=sdone===3?crownS.replace('CLS',''):'';
+  updateSoundIcon();
+  show('screen-home');
+}
+
+/* ---------- Levels ---------- */
+var curMode='plus';
+var crownS='<svg class="crown-s CLS" viewBox="0 0 24 19"><path d="M2 15 L3.2 5.5 L8 9.5 L12 3 L16 9.5 L20.8 5.5 L22 15 Z" fill="#FFC94D"/><rect x="2.6" y="15.8" width="18.8" height="2.6" rx="1.2" fill="#D99A26"/></svg>';
+function crowns3(n,cls){var h='';for(var i=0;i<3;i++){h+=crownS.replace('CLS',cls+(i<n?'':' off'));}return h;}
+function renderLevels(mode){
+  curMode=mode;
+  $('#levelTitle').textContent=MODES[mode].name+' — wähle dein Level';
+  var html='';
+  LEVEL_META[mode].forEach(function(meta,i){
+    var un=unlocked(mode,i);
+    html+='<button class="lvl'+(un?'':' locked')+'" data-lvl="'+i+'" '+(un?'':'disabled')+'>'
+      +'<span class="num">'+(un?(i+1):'🔒')+'</span>'
+      +'<span><span class="lt">'+meta.t+'</span><br><span class="ld">'+(un?meta.d:'Hol 2 Kronen im Level davor!')+'</span></span>'
+      +'<span class="lcrowns">'+crowns3(state.crowns[mode][i],'')+'</span></button>';
+  });
+  var allDone=state.crowns[mode].every(function(c){return c>=2;});
+  var passed=state.master[mode];
+  html+='<button class="lvl test'+(allDone?'':' locked')+'" data-lvl="test" '+(allDone?'':'disabled')+'>'
+    +'<span class="num">'+crownS.replace('CLS','')+'</span>'
+    +'<span><span class="lt">'+TEST_META[mode].t+'</span><br><span class="ld">'
+    +(passed?'Bestanden — du bist Meisterin!':(allDone?'12 Aufgaben, keine Tipps. Schaffst du 10?':'Hol erst in jedem Level 2 Kronen!'))
+    +'</span></span>'
+    +(passed?'<span class="lcrowns">'+crownS.replace('CLS','')+'</span>':'')
+    +'</button>';
+  $('#levelList').innerHTML=html;
+  document.querySelectorAll('#levelList .lvl').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var lv=btn.dataset.lvl;
+      startRound(curMode,lv==='test'?'test':parseInt(lv,10));
+    });
+  });
+  show('screen-levels');
+}
+
+/* ---------- Round ---------- */
+var R=null,lock=false,celebrations=[];
+function startRound(mode,lvl){
+  var q=[],seen={},isTest=(lvl==='test'),lvls=null;
+  if(isTest){
+    lvls=[0,0,1,1,2,2,3,3,4,4,ri(0,4),ri(0,4)];
+    for(var s=lvls.length-1;s>0;s--){var j=ri(0,s);var tmp=lvls[s];lvls[s]=lvls[j];lvls[j]=tmp;}
+  }
+  var n=isTest?12:10;
+  for(var i=0;i<n;i++){
+    var t,tries=0;
+    do{t=(mode==='mix')?genMix():genTask(mode,isTest?lvls[i]:lvl);tries++;}while(seen[t.a+t.sym+t.b]&&tries<25);
+    seen[t.a+t.sym+t.b]=1;q.push(t);
+  }
+  R={mode:mode,lvl:lvl,queue:q,idx:0,input:'',gems:0,score:0,test:isTest};
+  lock=false;
+  $('#playTitle').textContent=isTest?TEST_META[mode].t:((mode==='mix')?'Königs-Mix':MODES[mode].name+' · Level '+(lvl+1));
+  $('#roundGems').textContent='0';
+  renderTask();
+  show('screen-play');
+}
+function renderDots(){
+  var h='';
+  R.queue.forEach(function(t,i){
+    var cls='dot';
+    if(i===R.idx)cls+=' cur';
+    else if(t.st==='right')cls+=' right';
+    else if(t.st==='fixed')cls+=' fixed';
+    else if(t.st==='wrong')cls+=' wrong';
+    h+='<span class="'+cls+'"></span>';
+  });
+  $('#dots').innerHTML=h;
+}
+function renderTask(){
+  var t=R.queue[R.idx];
+  R.input='';
+  $('#task').innerHTML=t.a+' <span class="sym">'+t.sym+'</span> '+t.b+' <span class="sym">=</span> <span class="ansSlot" id="ansSlot">?</span>';
+  $('#hintPanel').className='hint';$('#hintPanel').innerHTML='';
+  $('#btnHint').style.display=R.test?'none':'';
+  renderDots();
+}
+function renderAnswer(){
+  var el=$('#ansSlot');
+  el.textContent=R.input===''?'?':R.input;
+  el.className='ansSlot'+(R.input===''?'':' filled');
+}
+function tap(d){
+  if(!R||lock)return;
+  if(R.input==='0')R.input=d;
+  else if(R.input.length<3)R.input+=d;
+  renderAnswer();
+}
+function back(){if(!R||lock)return;R.input=R.input.slice(0,-1);renderAnswer();}
+
+function statFor(t){
+  var k=t.mode+':'+t.lvl;
+  if(!state.stats[k])state.stats[k]={tries:0,right:0};
+  return state.stats[k];
+}
+function gainGem(){
+  var before=rankIdx(state.gems);
+  state.gems++;
+  var after=rankIdx(state.gems);
+  if(after>before)celebrations.push({t:'Du bist jetzt '+RANKS[after].n+'!',x:'Deine Juwelen funkeln im ganzen Königreich, Hanna!'});
+  var today=todayStr();
+  if(state.daily.date!==today){state.daily={date:today,count:0};}
+  state.daily.count++;
+  if(state.daily.count===GOAL&&state.lastCrownDate!==today){
+    state.streak=(state.lastCrownDate===yesterdayStr())?state.streak+1:1;
+    state.lastCrownDate=today;
+    celebrations.push({t:'Tageskrone erobert!',x:'20 Juwelen an einem Tag — dein Kronen-Kalender wächst: '+state.streak+' '+(state.streak===1?'Tag':'Tage')+'!'});
+  }
+  save();
+}
+function addGem(){
+  R.gems++;$('#roundGems').textContent=R.gems;
+  gainGem();
+}
+function flashPraise(){
+  var p=$('#praise');p.textContent=pick(PRAISE);
+  p.classList.remove('show');void p.offsetWidth;p.classList.add('show');
+}
+function check(){
+  if(!R||lock)return;
+  var t=R.queue[R.idx];
+  if(R.input==='')return;
+  var v=parseInt(R.input,10);
+  if(!t.tried){t.tried=true;var st=statFor(t);st.tries++;if(v===t.ans)st.right++;}
+  if(v===t.ans){
+    t.st=t.revealed?'fixed':'right';
+    if(!t.revealed&&t.isBase)R.score++;
+    if(t.sym==='·'&&!t.revealed){var k=malKey(t.a,t.b);if(state.weak[k]){state.weak[k]--;if(state.weak[k]<=0)delete state.weak[k];}}
+    addGem();sCorrect();flashPraise();renderDots();
+    lock=true;
+    setTimeout(function(){lock=false;nextTask();},780);
+  }else{
+    t.attempts++;sWrong();
+    var task=$('#task');task.classList.remove('shake');void task.offsetWidth;task.classList.add('shake');
+    if(t.attempts===1){
+      if(!R.test)openHint(t,false);
+      R.input='';renderAnswer();
+    }
+    else{revealSolution(t);}
+  }
+}
+function nextTask(){
+  R.idx++;
+  if(R.idx>=R.queue.length)endRound();
+  else renderTask();
+}
+function revealSolution(t){
+  t.revealed=true;t.st='wrong';renderDots();
+  if(t.sym==='·'){var k=malKey(t.a,t.b);state.weak[k]=Math.min(8,(state.weak[k]||0)+2);save();}
+  if(!R.test&&t.isBase&&R.queue.length<14){
+    var c=mk(t.mode,t.lvl,t.a,t.sym,t.b,t.ans);c.isBase=false;
+    R.queue.push(c);
+  }
+  openHint(t,true);
+  R.input='';renderAnswer();
+  lock=true;
+}
+
+/* ---------- Hints ---------- */
+function rods(n,cls){var h='';for(var i=0;i<n;i++)h+='<span class="rod '+cls+'"></span>';return h;}
+function rodsMinus(aT,bT){var h='';for(var i=0;i<aT;i++)h+='<span class="rod '+(i>=aT-bT?'cross':'')+'"></span>';return h;}
+function ones(n,cls){var h='';for(var i=0;i<n;i++)h+='<span class="one '+(cls||'')+'"></span>';return h;}
+function arrayDots(a,b){
+  var h='<div class="arr">';
+  for(var i=0;i<a;i++)h+='<div class="arow">'+ones(b)+'</div>';
+  return h+'</div>';
+}
+function hintHTML(t,withSol){
+  var aT=Math.floor(t.a/10),aO=t.a%10,bT=Math.floor(t.b/10),bO=t.b%10,body='';
+  if(t.sym==='·'){
+    var parts=[];for(var i=0;i<t.a;i++)parts.push(t.b);
+    body='<p><b>'+t.a+' · '+t.b+'</b> heißt: '+t.a+'-mal die '+t.b+'</p>'
+        +'<p>'+parts.join(' + ')+'</p>'+arrayDots(t.a,t.b);
+  }else if(t.sym==='+'){
+    if(aO===0&&bO===0){
+      body='<div class="blocks">'+rods(aT,'')+'<span class="op">+</span>'+rods(bT,'blue')+'</div>'
+          +'<p>'+aT+' Zehner + '+bT+' Zehner = <b>'+(aT+bT)+' Zehner</b></p>';
+    }else if(bO===0){
+      body='<p><b>Nur die Zehner ändern sich!</b></p>'
+          +'<div class="blocks">'+rods(aT,'')+'<span class="op">+</span>'+rods(bT,'blue')+'<span class="op">·</span>'+ones(aO)+'</div>'
+          +'<p>'+aT+' Zehner + '+bT+' Zehner = <b>'+(aT+bT)+' Zehner</b> — und deine '+aO+' Einer bleiben.</p>';
+    }else if(bT===0){
+      if(aO+bO<10){
+        body='<p><b>Nur die Einer ändern sich!</b></p><p>'+aO+' + '+bO+' = <b>'+(aO+bO)+'</b> Einer. Die '+aT+' Zehner bleiben.</p>';
+      }else{
+        var to10=10-aO;
+        body='<p><b>Über die Zehnerbrücke!</b></p><p>Erst bis zur '+((aT+1)*10)+': +'+to10+'. Dann noch +'+(bO-to10)+'.</p>';
+      }
+    }else{
+      body='<p><b>Erst die Zehner, dann die Einer!</b></p>'
+          +'<p>'+(aT*10)+' + '+(bT*10)+' = <b>'+((aT+bT)*10)+'</b> · dann '+aO+' + '+bO+' = <b>'+(aO+bO)+'</b></p>'
+          +(withSol?'':'<p>Und jetzt beides zusammen?</p>');
+    }
+  }else{
+    if(aO===0&&bO===0){
+      body='<div class="blocks">'+rodsMinus(aT,bT)+'</div>'
+          +'<p>'+aT+' Zehner − '+bT+' Zehner = <b>'+(aT-bT)+' Zehner</b></p>';
+    }else if(bO===0){
+      body='<p><b>Nur die Zehner ändern sich!</b></p>'
+          +'<div class="blocks">'+rodsMinus(aT,bT)+'<span class="op">·</span>'+ones(aO)+'</div>'
+          +'<p>'+aT+' Zehner − '+bT+' Zehner = <b>'+(aT-bT)+' Zehner</b> — und deine '+aO+' Einer bleiben.</p>';
+    }else if(bT===0){
+      if(bO<=aO){
+        body='<p><b>Nur die Einer ändern sich!</b></p><p>'+aO+' − '+bO+' = <b>'+(aO-bO)+'</b> Einer. Die '+aT+' Zehner bleiben.</p>';
+      }else{
+        body='<p><b>Rückwärts über die Zehnerbrücke!</b></p><p>Erst −'+aO+' bis zur '+(aT*10)+'. Dann noch −'+(bO-aO)+'.</p>';
+      }
+    }else{
+      body='<p><b>Erst die Zehner, dann die Einer!</b></p>'
+          +'<p>'+t.a+' − '+(bT*10)+' = <b>'+(t.a-bT*10)+'</b> · dann noch − '+bO+'</p>';
+    }
+  }
+  if(withSol){
+    body+='<p class="sol">'+t.a+' '+t.sym+' '+t.b+' = '+t.ans+'</p><p>Die kommt gleich nochmal — dann schaffst du sie!</p>'
+        +'<button class="gobtn" id="btnGo">Weiter ›</button>';
+  }
+  return body;
+}
+function openHint(t,withSol){
+  var p=$('#hintPanel');
+  p.innerHTML=hintHTML(t,withSol);
+  p.classList.add('show');
+  $('#btnHint').style.display='none';
+  if(withSol){
+    $('#btnGo').addEventListener('click',function(){lock=false;nextTask();});
+  }
+}
+
+/* ---------- Summary ---------- */
+function crownsFor(s){return s>=9?3:(s>=7?2:(s>=5?1:0));}
+var crownM='<svg class="crown-m CLS" viewBox="0 0 24 19"><path d="M2 15 L3.2 5.5 L8 9.5 L12 3 L16 9.5 L20.8 5.5 L22 15 Z" fill="#FFC94D"/><rect x="2.6" y="15.8" width="18.8" height="2.6" rx="1.2" fill="#D99A26"/></svg>';
+function endRound(){
+  var isMix=R.mode==='mix';
+  if(R.test){
+    var testPassed=R.score>=10;
+    if(testPassed&&!state.master[R.mode]){
+      state.master[R.mode]=true;
+      for(var b=0;b<10;b++)addGem();
+      celebrations.push({t:TEST_META[R.mode].t+' bestanden!',x:'Du bist jetzt Meisterin des '+TEST_META[R.mode].weg+', Hanna! Dafür bekommst du 10 Extra-Juwelen.'});
+    }
+    save();
+    $('#sumCrowns').innerHTML=testPassed?crownM.replace('CLS','won anim'):'';
+    $('#sumBig').textContent=testPassed?'Prüfung bestanden, Hanna!':'Noch nicht ganz!';
+    $('#sumText').textContent=R.score+' von 12 ohne Hilfe gelöst · '+(testPassed?('+'+R.gems+' Kronjuwelen'):'Ab 10 richtigen bist du Meisterin — übe noch eine Runde und versuch es gleich nochmal!');
+    $('#btnNextLvl').style.display='none';
+    $('#btnSchoolHint').style.display='none';
+    show('screen-summary');
+    if(testPassed){confetti();sFanfare();}
+    runCelebrations();
+    return;
+  }
+  var won=0,nextOpen=false;
+  if(!isMix){
+    won=crownsFor(R.score);
+    if(won>state.crowns[R.mode][R.lvl])state.crowns[R.mode][R.lvl]=won;
+    nextOpen=R.lvl<4&&unlocked(R.mode,R.lvl+1);
+  }
+  save();
+  var ch='';
+  for(var i=0;i<3;i++){
+    ch+=crownM.replace('CLS',(i<won?'won anim':''))
+        .replace('<svg ','<svg style="animation-delay:'+(i*0.18)+'s" ');
+  }
+  $('#sumCrowns').innerHTML=isMix?'':ch;
+  $('#sumBig').textContent=isMix
+    ?'Königs-Mix: '+R.score+' von 10!'
+    :(won===3?'Alle 3 Kronen, Hanna!':won>=1?won+(won===1?' Krone':' Kronen')+' erobert!':'Weiter geht’s, Hanna!');
+  $('#sumText').textContent=R.score+' von 10 gleich beim ersten Versuch richtig · +'+R.gems+' Kronjuwelen';
+  $('#btnNextLvl').style.display=nextOpen?'':'none';
+  $('#btnSchoolHint').style.display=R.queue.some(function(t){return t.revealed&&t.sym!=='·';})?'':'none';
+  show('screen-summary');
+  if(!isMix&&won===3){confetti();sFanfare();}
+  runCelebrations();
+}
+function runCelebrations(){
+  if(!celebrations.length)return;
+  var c=celebrations.shift();
+  if(!c){runCelebrations();return;}
+  $('#veilTitle').textContent=c.t;
+  $('#veilText').textContent=c.x;
+  $('#veil').classList.add('show');
+  confetti();sFanfare();
+}
+$('#veilBtn').addEventListener('click',function(){
+  $('#veil').classList.remove('show');
+  runCelebrations();
+});
+
+/* ---------- Confetti & stars ---------- */
+function confetti(){
+  if(RM)return;
+  var colors=['#FFC94D','#FF7B8A','#7FB0FF','#5CD695','#9FE7FF'];
+  for(var i=0;i<55;i++){
+    var d=document.createElement('div');
+    d.className='confetti';
+    d.style.left=ri(0,100)+'vw';
+    d.style.background=pick(colors);
+    d.style.animation='confFall '+(2+Math.random()*1.4)+'s linear '+(Math.random()*0.6)+'s forwards';
+    document.body.appendChild(d);
+    d.addEventListener('animationend',function(){this.remove();});
+  }
+}
+(function stars(){
+  for(var i=0;i<55;i++){
+    var s=document.createElement('span');
+    s.className='star';
+    var sz=(Math.random()*2+1).toFixed(1);
+    s.style.width=sz+'px';s.style.height=sz+'px';
+    s.style.left=ri(0,100)+'vw';s.style.top=ri(0,92)+'vh';
+    if(!RM)s.style.animation='tw '+(2.2+Math.random()*3)+'s ease-in-out '+(Math.random()*3)+'s infinite';
+    document.body.appendChild(s);
+  }
+})();
+
+/* ---------- Parents ---------- */
+function renderParents(){
+  var rows='';
+  ['plus','minus','mal'].forEach(function(m){
+    LEVEL_META[m].forEach(function(meta,i){
+      var st=state.stats[m+':'+i];
+      if(!st||!st.tries)return;
+      rows+='<tr><td>'+MODES[m].name+' '+(i+1)+' · '+meta.t+'</td><td>'+st.tries+'</td><td>'+Math.round(st.right/st.tries*100)+'&#8201;%</td></tr>';
+    });
+  });
+  $('#statsBody').innerHTML=rows||'<tr><td colspan="3" style="color:var(--ink-dim)">Noch keine Runden gespielt.</td></tr>';
+  var wk=Object.keys(state.weak).sort(function(a,b){return state.weak[b]-state.weak[a];});
+  $('#weakList').innerHTML=wk.length
+    ?wk.map(function(k){var p=k.split('x');return '<span class="wchip">'+p[0]+' · '+p[1]+'</span>';}).join('')
+    :'<span class="pnote">Gerade keine — alles sitzt!</span>';
+  updateSyncInfo();
+  show('screen-parents');
+}
+$('#btnReset').addEventListener('click',function(){
+  showDialog({title:'Alles löschen?',text:'Der ganze Fortschritt wird gelöscht. Das kann nicht rückgängig gemacht werden.',okLabel:'Ja, löschen',onOk:function(){
+    state=JSON.parse(JSON.stringify(DEFAULT));save();renderHome();
+  }});
+});
+
+/* ---------- Dialog (confirm/alert-Ersatz — confirm() ist in der Artifact-Sandbox blockiert) ---------- */
+var dlgYes=null;
+function showDialog(opts){
+  $('#dlgTitle').textContent=opts.title;
+  $('#dlgText').textContent=opts.text||'';
+  $('#dlgText').style.display=opts.text?'':'none';
+  var inp=$('#dlgInput');
+  inp.style.display=opts.input?'':'none';
+  inp.value='';
+  $('#dlgCancel').style.display=(opts.cancel===false)?'none':'';
+  $('#dlgOk').textContent=opts.okLabel||'Ja';
+  dlgYes=opts.onOk||null;
+  $('#dlg').classList.add('show');
+  if(opts.input)setTimeout(function(){inp.focus();},60);
+}
+$('#dlgCancel').addEventListener('click',function(){$('#dlg').classList.remove('show');dlgYes=null;});
+$('#dlgOk').addEventListener('click',function(){
+  var fn=dlgYes,val=$('#dlgInput').value;
+  $('#dlg').classList.remove('show');dlgYes=null;
+  if(fn)fn(val);
+});
+$('#dlgInput').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('#dlgOk').click();}});
+
+/* ---------- Zauberschule ---------- */
+var SCHOOL=[
+  {t:'Was sind Zehner und Einer?',d:'Punkte zaubern und bündeln',steps:3},
+  {t:'Der Zehner-Zauber',d:'57 − 20 ganz leicht',steps:3},
+  {t:'Die Zehnerbrücke',d:'Der Trick für 47 + 6',steps:3}
+];
+var SL=null;
+function renderSchool(){
+  var html='';
+  SCHOOL.forEach(function(l,i){
+    html+='<button class="lvl" data-les="'+i+'">'
+      +'<span class="num">'+(i+1)+'</span>'
+      +'<span><span class="lt">'+l.t+'</span><br><span class="ld">'+l.d+'</span></span>'
+      +(state.school[i]?'<span class="lcrowns">'+crownS.replace('CLS','')+'</span>':'')
+      +'</button>';
+  });
+  $('#schoolList').innerHTML=html;
+  document.querySelectorAll('#schoolList .lvl').forEach(function(btn){
+    btn.addEventListener('click',function(){startLesson(parseInt(btn.dataset.les,10));});
+  });
+  show('screen-school');
+}
+function startLesson(i){SL={l:i,step:0};show('screen-lesson');renderStep();}
+function lsSet(text,haptic){
+  $('#lsText').textContent=text;
+  $('#lsHaptic').textContent=haptic||'';
+  $('#lsNext').style.display='none';
+  $('#lsStage').innerHTML='';
+  $('#lsControls').innerHTML='';
+  $('#lsControls').style.display='';
+}
+function lsProgress(){
+  var h='';
+  for(var i=0;i<SCHOOL[SL.l].steps;i++){h+='<span class="dot'+(i===SL.step?' cur':(i<SL.step?' right':''))+'"></span>';}
+  $('#lsDots').innerHTML=h;
+}
+function lsGoal(text){
+  if(text)$('#lsText').textContent=text;
+  $('#lsNext').style.display='';
+  sCorrect();
+}
+function blockEls(tens,onesCount,oneCls){
+  var h='<div class="blockrow">';
+  for(var i=0;i<tens;i++)h+='<span class="rod big"></span>';
+  h+='</div><div class="blockrow">';
+  for(var j=0;j<onesCount;j++)h+='<span class="one big '+(oneCls||'')+'"></span>';
+  return h+'</div>';
+}
+function wireQuiz(right,onRight){
+  document.querySelectorAll('#lsControls .qz').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(b.dataset.q===String(right)){onRight();}
+      else{b.classList.remove('wrongflash');void b.offsetWidth;b.classList.add('wrongflash');sWrong();}
+    });
+  });
+}
+function renderStep(){
+  lsProgress();
+  $('#lsTitle').textContent=SCHOOL[SL.l].t;
+  var k=SL.l+'-'+SL.step;
+  if(k==='0-0'){
+    lsSet('Das hier sind Einer. Tippe auf „+1 Einer" und schau genau hin, was bei 10 passiert!','Leg deine Einerwürfel mit — immer gleich viele wie hier auf dem Bildschirm!');
+    $('#lsStage').innerHTML='<div class="blockrow" id="pen"></div><div class="buildnum" id="penNum">0</div>';
+    $('#lsControls').innerHTML='<button class="bigbtn" id="add1">+1 Einer</button>';
+    var count=0;
+    $('#add1').addEventListener('click',function(){
+      if(count>=10)return;
+      count++;
+      var o=document.createElement('span');o.className='one big pop';
+      $('#pen').appendChild(o);
+      $('#penNum').textContent=count;
+      if(count===10){
+        setTimeout(function(){
+          $('#pen').innerHTML='<span class="rod big pop"></span>';
+          $('#penNum').innerHTML='<span class="tz">1</span> Zehner!';
+          $('#lsControls').style.display='none';
+          lsGoal('Zauberei! 10 Einer werden zu 1 Zehnerstange gebündelt — genau so lang wie 10 Würfel nebeneinander.');
+        },550);
+      }
+    });
+  }
+  else if(k==='0-1'){
+    lsSet('Schau dir die 57 an: Die goldene 5 sind die Stangen, die 7 sind die Einer. Wie viele ZEHNER stecken in der 57?','');
+    $('#lsStage').innerHTML=blockEls(5,7)+'<div class="buildnum"><span class="tz">5</span>7</div>';
+    $('#lsControls').innerHTML='<button class="bigbtn qz" data-q="3">3</button><button class="bigbtn qz" data-q="5">5</button><button class="bigbtn qz" data-q="7">7</button>';
+    wireQuiz(5,function(){lsGoal('Genau! 5 Zehnerstangen und 7 Einer — zusammen die 57.');});
+  }
+  else if(k==='0-2'){
+    lsSet('Jetzt du: Baue die 43!','Baue die 43 gleichzeitig mit deinen echten Blöcken auf dem Tisch!');
+    var t=0,o=0;
+    $('#lsStage').innerHTML='<div id="buildview" style="width:100%"></div>';
+    $('#lsControls').innerHTML='<button class="bigbtn" id="pt">+ Zehner</button><button class="bigbtn" id="po">+ Einer</button><button class="bigbtn" id="mt">− Zehner</button><button class="bigbtn" id="mo">− Einer</button>';
+    var paint=function(){
+      $('#buildview').innerHTML=blockEls(t,o)+'<div class="buildnum">'+(t>0?'<span class="tz">'+t+'</span>':'')+o+'</div>';
+      if(t===4&&o===3){
+        $('#lsControls').style.display='none';
+        lsGoal('Perfekt! 4 Zehner und 3 Einer = 43. Du kannst Zahlen bauen!');
+      }
+    };
+    $('#pt').addEventListener('click',function(){if(t<9){t++;paint();}});
+    $('#po').addEventListener('click',function(){if(o<9){o++;paint();}});
+    $('#mt').addEventListener('click',function(){if(t>0){t--;paint();}});
+    $('#mo').addEventListener('click',function(){if(o>0){o--;paint();}});
+    paint();
+  }
+  else if(k==='1-0'){
+    lsSet('Wir rechnen 57 − 20. Tippe 2 Zehnerstangen an und zaubere sie weg!','Leg die 57 mit deinen Blöcken: 5 Stangen und 7 Würfel.');
+    var rem=0;
+    var h='<div class="blockrow" id="rods1">';
+    for(var i1=0;i1<5;i1++)h+='<span class="rod big clickable"></span>';
+    h+='</div><div class="blockrow">';
+    for(var j1=0;j1<7;j1++)h+='<span class="one big"></span>';
+    h+='</div><div class="buildnum" id="eq1">57 − 20 = ?</div>';
+    $('#lsStage').innerHTML=h;
+    document.querySelectorAll('#rods1 .rod').forEach(function(r){
+      r.addEventListener('click',function(){
+        if(rem>=2||r.classList.contains('gone'))return;
+        r.classList.add('gone');rem++;
+        if(rem===2){
+          $('#eq1').innerHTML='57 − 20 = <span class="tz">37</span>';
+          lsGoal('Siehst du? Die 7 Einer haben geschlafen — nur die Zehner haben sich verändert. 3 Stangen übrig: 37!');
+        }
+      });
+    });
+  }
+  else if(k==='1-1'){
+    lsSet('Jetzt andersrum: 34 + 20. Zaubere 2 Zehnerstangen DAZU!','Leg die 34 und lege 2 Stangen dazu.');
+    var added=0;
+    $('#lsStage').innerHTML='<div id="bv" style="width:100%"></div>';
+    var paint2=function(){$('#bv').innerHTML=blockEls(3+added,4)+'<div class="buildnum">34 + '+(added*10)+(added===2?' = <span class="tz">54</span>':' = ?')+'</div>';};
+    $('#lsControls').innerHTML='<button class="bigbtn" id="addT">+1 Zehnerstange</button>';
+    $('#addT').addEventListener('click',function(){
+      if(added>=2)return;
+      added++;paint2();
+      if(added===2){$('#lsControls').style.display='none';lsGoal('5 Zehner und 4 Einer = 54! Und die Einer? Haben wieder geschlafen.');}
+    });
+    paint2();
+  }
+  else if(k==='1-2'){
+    lsSet('Letzte Prüfung, Zauberlehrling: 62 − 30. Zaubere die richtigen Stangen weg!','Sag den Zauberspruch laut: „Nur die Zehner tanzen — die Einer bleiben sitzen!"');
+    var rem2=0;
+    var h2='<div class="blockrow" id="rods2">';
+    for(var i2=0;i2<6;i2++)h2+='<span class="rod big clickable"></span>';
+    h2+='</div><div class="blockrow">';
+    for(var j2=0;j2<2;j2++)h2+='<span class="one big"></span>';
+    h2+='</div><div class="buildnum" id="eq2">62 − 30 = ?</div>';
+    $('#lsStage').innerHTML=h2;
+    document.querySelectorAll('#rods2 .rod').forEach(function(r){
+      r.addEventListener('click',function(){
+        if(rem2>=3||r.classList.contains('gone'))return;
+        r.classList.add('gone');rem2++;
+        if(rem2===3){
+          $('#eq2').innerHTML='62 − 30 = <span class="tz">32</span>';
+          lsGoal('32! Du kannst den Zehner-Zauber. Merksatz: Nur die Zehner tanzen — die Einer bleiben sitzen!');
+        }
+      });
+    });
+  }
+  else if(k==='2-0'){
+    lsSet('Wir rechnen 47 + 6. Die 47 hat 7 Einer im Zehnerhaus — 3 Plätze sind frei. Schiebe 3 blaue Einer hinein!','Leg 7 Würfel in eine Zehnerreihe und 6 andere daneben.');
+    var h3='<div class="stagegroup"><span class="glabel" id="rodlabel">4 Zehner</span><div class="blockrow" id="rods3">';
+    for(var i3=0;i3<4;i3++)h3+='<span class="rod big"></span>';
+    h3+='</div></div>';
+    h3+='<div class="stagegroup" id="mg"><span class="glabel">Zehnerhaus</span><div class="tf" id="tf">';
+    for(var s3=0;s3<10;s3++)h3+='<span class="slot">'+(s3<7?'<span class="one big"></span>':'')+'</span>';
+    h3+='</div></div>';
+    h3+='<div class="stagegroup"><span class="glabel">+ 6 Einer</span><div class="blockrow" id="blues">';
+    for(var b3=0;b3<6;b3++)h3+='<span class="one big blue clickable"></span>';
+    h3+='</div></div>';
+    $('#lsStage').innerHTML=h3;
+    var moved=0;
+    document.querySelectorAll('#blues .one').forEach(function(d){
+      d.addEventListener('click',function(){
+        if(moved>=3||d.classList.contains('used'))return;
+        d.classList.add('used');d.style.opacity='.15';d.style.pointerEvents='none';
+        document.querySelectorAll('#tf .slot')[7+moved].innerHTML='<span class="one big blue pop"></span>';
+        moved++;
+        if(moved===3){
+          setTimeout(function(){
+            var mg=document.getElementById('mg');if(mg)mg.remove();
+            $('#rods3').insertAdjacentHTML('beforeend','<span class="rod big pop"></span>');
+            $('#rodlabel').textContent='5 Zehner = 50!';
+            lsGoal('Das Zehnerhaus ist voll — 10 Einer werden 1 neue Stange! Jetzt hast du 5 Zehner = 50. Und 3 blaue Einer sind noch übrig.');
+          },550);
+        }
+      });
+    });
+  }
+  else if(k==='2-1'){
+    lsSet('47 + 3 = 50. Und jetzt die 3 übrigen blauen Einer: 50 + 3 = ?','');
+    $('#lsStage').innerHTML='<div class="bridge"><span class="bnum gold">47</span><span class="bstep">+3 →</span><span class="bnum gold">50</span><span class="bstep">+3 →</span><span class="bnum" id="blast">?</span></div>';
+    $('#lsControls').innerHTML='<button class="bigbtn qz" data-q="52">52</button><button class="bigbtn qz" data-q="53">53</button><button class="bigbtn qz" data-q="56">56</button>';
+    wireQuiz(53,function(){
+      $('#blast').textContent='53';$('#blast').classList.add('gold');
+      lsGoal('53! Du bist über die Zehnerbrücke gegangen: 47 + 6 = 53.');
+    });
+  }
+  else{
+    lsSet('Der Brücken-Trick für immer: Erst bis zum vollen Zehner, dann den Rest. So kommst du sicher über jede Zehnerbrücke!','Mit den Blöcken: Leg die 47, fülle die Einer auf 10 auf — und TAUSCHE die 10 Würfel gegen 1 Stange. Dieses Tauschen ist der ganze Trick!');
+    $('#lsStage').innerHTML='<div class="bridge"><span class="bnum gold">47</span><span class="bstep">+3 →</span><span class="bnum gold">50</span><span class="bstep">+3 →</span><span class="bnum gold">53</span></div>';
+    lsGoal();
+  }
+}
+function finishLesson(){
+  var i=SL.l;
+  if(!state.school[i]){
+    state.school[i]=true;
+    for(var g=0;g<5;g++)gainGem();
+    celebrations.push({t:'Lektion geschafft!',x:'Du hast „'+SCHOOL[i].t+'" gemeistert — dafür bekommst du 5 Juwelen!'});
+  }
+  save();
+  renderSchool();
+  runCelebrations();
+}
+$('#lsNext').addEventListener('click',function(){
+  SL.step++;
+  if(SL.step>=SCHOOL[SL.l].steps)finishLesson();
+  else renderStep();
+});
+$('#btnLessonBack').addEventListener('click',renderSchool);
+$('#btnSchool').addEventListener('click',renderSchool);
+var hasSpeech=('speechSynthesis' in window);
+if(!hasSpeech)$('#btnSpeak').style.display='none';
+$('#btnSpeak').addEventListener('click',function(){
+  if(!hasSpeech)return;
+  try{
+    speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance($('#lsText').textContent+' '+$('#lsHaptic').textContent);
+    u.lang='de-DE';u.rate=0.95;
+    speechSynthesis.speak(u);
+  }catch(e){}
+});
+
+/* ---------- Wiring ---------- */
+var SND_ON='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+var SND_OFF='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" opacity=".55"/><line x1="16" y1="9" x2="21" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="21" y1="9" x2="16" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+function updateSoundIcon(){$('#btnSound').innerHTML=state.sound?SND_ON:SND_OFF;}
+var parentOK=false;
+$('#btnParents').addEventListener('click',function(){
+  if(parentOK){renderParents();return;}
+  showDialog({title:'Elternbereich',text:'Bitte den Eltern-Code eingeben:',input:true,okLabel:'Öffnen',onOk:function(v){
+    if(v==='1234'){parentOK=true;renderParents();}
+    else showDialog({title:'Falscher Code',text:'Dieser Bereich ist für Papa & Mama.',okLabel:'Ok',cancel:false});
+  }});
+});
+$('#btnSound').addEventListener('click',function(){state.sound=!state.sound;save();updateSoundIcon();});
+$('#btnQuit').addEventListener('click',function(){
+  if(R&&R.idx<R.queue.length){
+    showDialog({title:'Runde beenden?',text:'Deine Juwelen aus dieser Runde behältst du.',okLabel:'Ja, beenden',onOk:function(){R=null;lock=false;renderHome();}});
+  }else{R=null;lock=false;renderHome();}
+});
+document.querySelectorAll('.mode-card').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var m=btn.dataset.mode;
+    if(!m)return;
+    ac();
+    if(m==='mix')startRound('mix',0);
+    else renderLevels(m);
+  });
+});
+document.querySelectorAll('[data-back]').forEach(function(btn){
+  btn.addEventListener('click',function(){renderHome();});
+});
+$('#btnAgain').addEventListener('click',function(){startRound(R.mode,R.lvl);});
+$('#btnNextLvl').addEventListener('click',function(){startRound(R.mode,R.lvl+1);});
+$('#btnHome2').addEventListener('click',renderHome);
+$('#btnSchoolHint').addEventListener('click',renderSchool);
+$('#btnHint').addEventListener('click',function(){if(R)openHint(R.queue[R.idx],false);});
+document.querySelectorAll('.key[data-d]').forEach(function(k){
+  k.addEventListener('click',function(){tap(k.dataset.d);});
+});
+$('#keyDel').addEventListener('click',back);
+$('#keyOk').addEventListener('click',check);
+document.addEventListener('keydown',function(e){
+  if($('#dlg').classList.contains('show'))return;
+  if(!$('#screen-play').classList.contains('active'))return;
+  if(e.key>='0'&&e.key<='9')tap(e.key);
+  else if(e.key==='Backspace')back();
+  else if(e.key==='Enter')check();
+});
+$('#btnExport').addEventListener('click',function(){
+  var code=btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+  var box=$('#codeBox');box.value=code;box.focus();box.select();
+});
+$('#btnImport').addEventListener('click',function(){
+  var v=$('#codeBox').value.trim();
+  try{
+    var st=JSON.parse(decodeURIComponent(escape(atob(v))));
+    if(typeof st.gems!=='number')throw 0;
+    var localSound=state.sound;
+    state=mergeStates(state,st);
+    state.sound=localSound;
+    save();
+    renderParents();
+    showDialog({title:'Spielstand übernommen!',text:'Beide Stände wurden sicher verschmolzen. Juwelen jetzt: '+state.gems+'.',okLabel:'Ok',cancel:false});
+  }catch(e){
+    showDialog({title:'Das war kein gültiger Code',text:'Bitte den kompletten Code einfügen und nochmal versuchen.',okLabel:'Ok',cancel:false});
+  }
+});
+
+renderHome();
+syncPull();
+})();
+</script>
