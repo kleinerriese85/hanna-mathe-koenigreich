@@ -183,6 +183,34 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
 .danger{color:var(--bad); border-color:rgba(255,139,150,.4);}
 .psec{margin-bottom:14px;}
 
+/* ---------- Einmaleins: Punktefelder zum Zerschneiden ---------- */
+.marr{display:flex; flex-direction:column; gap:4px; align-items:center;}
+.mrow{display:flex; gap:4px; padding:3px 5px; border-radius:8px; transition:background .2s ease, opacity .35s ease;}
+.mrow .md{width:15px; height:15px; border-radius:50%; background:var(--gold);}
+.mrow.blue .md{background:var(--saphir);}
+.mrow.clickable{cursor:pointer; outline:1px dashed rgba(255,255,255,.22);}
+.mrow.gone{opacity:.13;}
+.mcut{width:100%; max-width:210px; height:3px; background:var(--bad); border-radius:2px; margin:3px 0;}
+.mlabel{font-size:13px; font-weight:800; color:var(--ink-dim); margin-top:2px;}
+.mlabel.g{color:var(--gold);} .mlabel.b{color:var(--saphir);}
+.msum{font-size:20px; font-weight:900; font-variant-numeric:tabular-nums; margin-top:6px;}
+.msum .tz{color:var(--gold);}
+.hint .marr{align-items:flex-start; margin:6px 0;}
+.hint .mrow{gap:3px; padding:2px 3px;}
+.hint .mrow .md{width:10px; height:10px;}
+
+/* ---------- Königs-Tafel (1x1-Übersicht) ---------- */
+.tafel{display:grid; grid-template-columns:repeat(11,1fr); gap:3px; margin:4px 0 10px;}
+.tc{aspect-ratio:1/1; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; font-variant-numeric:tabular-nums; background:rgba(255,255,255,.06); color:var(--ink-dim);}
+.tc.hd{background:none; color:var(--ink-dim); font-size:11px;}
+.tc.s1{background:rgba(255,139,150,.42); color:var(--ink);}
+.tc.s2{background:rgba(127,176,255,.45); color:var(--ink);}
+.tc.s3{background:var(--gold); color:#231708;}
+.tc.hard{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.42);}
+.tlegend{display:flex; flex-wrap:wrap; gap:10px 14px; font-size:12px; color:var(--ink-dim); margin-top:2px;}
+.tlegend span{display:flex; align-items:center; gap:5px;}
+.tlegend i{width:12px; height:12px; border-radius:4px; display:inline-block;}
+
 /* ---------- Schatzkammer ---------- */
 .mode-card.kammer{grid-column:1/-1; border-color:rgba(159,231,255,.5); background:rgba(159,231,255,.06);}
 .newdot{position:absolute; top:11px; right:11px; background:var(--bad); color:#2A0E12; font-size:11px; font-weight:900; border-radius:99px; padding:3px 9px; letter-spacing:.3px;}
@@ -390,6 +418,19 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
     </div>
 
     <div class="ksec">
+      <p class="ktitle">Die Königs-Tafel</p>
+      <p class="kcount" id="kTafelCount"></p>
+      <div class="tafel" id="kTafel"></div>
+      <div class="tlegend">
+        <span><i style="background:var(--gold)"></i>sitzt sofort</span>
+        <span><i style="background:rgba(127,176,255,.45)"></i>fast</span>
+        <span><i style="background:rgba(255,139,150,.42)"></i>noch üben</span>
+        <span><i style="background:rgba(255,255,255,.06)"></i>noch nicht dran</span>
+      </div>
+      <p class="ksub" id="kTafelNote" style="margin-top:10px"></p>
+    </div>
+
+    <div class="ksec">
       <p class="ktitle">Die Kronen-Tafel</p>
       <p class="kcount" id="kCrownCount"></p>
       <div class="crowngrid" id="kCrowns"></div>
@@ -410,7 +451,13 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
       <p class="pnote"><b>Die Schatzkammer</b> ist die Sammel-Ansicht: 5 Ränge, 24 Abzeichen und alle 45 Kronen an einem Ort — erreichte in Farbe, offene als Schloss mit Bedingung. Das ist bewusst so gebaut, dass die Lücken sichtbar sind: Ein leerer Platz „Saphir-Meisterin" zieht sie zum Minus-Weg, ein leeres Zauberschul-Regal in die Lektionen. Wenn du sie lenken willst, zeig ihr dort das nächste erreichbare Abzeichen. Ab <b>Mathe-Königin</b> (550 Juwelen) geht es weiter mit Sternen auf der Krone — einer je 250 Juwelen, damit nach dem Titel kein Leerlauf entsteht.</p>
     </div>
     <div class="card psec">
-      <p class="pnote"><b>Rechenwege, die das Spiel zeigt</b> (so hilfst du beim Üben mit denselben Worten): Bei 57&nbsp;−&nbsp;20 ändern sich nur die Zehner: 5&nbsp;Zehner&nbsp;−&nbsp;2&nbsp;Zehner&nbsp;=&nbsp;3&nbsp;Zehner, die 7 Einer bleiben → 37. Bei 47&nbsp;+&nbsp;6 geht es über die Zehnerbrücke: erst +3 bis 50, dann +3. Beim Einmaleins: 7&nbsp;·&nbsp;4 heißt 7-mal die 4.</p>
+      <p class="pnote"><b>Rechenwege, die das Spiel zeigt</b> (so hilfst du beim Üben mit denselben Worten): Bei 57&nbsp;−&nbsp;20 ändern sich nur die Zehner: 5&nbsp;Zehner&nbsp;−&nbsp;2&nbsp;Zehner&nbsp;=&nbsp;3&nbsp;Zehner, die 7 Einer bleiben → 37. Bei 47&nbsp;+&nbsp;6 geht es über die Zehnerbrücke: erst +3 bis 50, dann +3. Beim Einmaleins wird jetzt <b>abgeleitet statt zusammengezählt</b> (siehe unten).</p>
+    </div>
+    <div class="card psec">
+      <p class="pnote"><b>Einmaleins: die Tricks, die das Spiel beibringt.</b> Die Fachdidaktik ist hier eindeutig: Aufgaben wie 7&nbsp;·&nbsp;8 als 8+8+8+… zusammenzuzählen führt ins zählende Rechnen, das bei großen Aufgaben zusammenbricht. Stattdessen gibt es <b>Anker</b> (1er, 2er, 5er, 10er und die Quadrataufgaben) und daraus wird alles andere <b>abgeleitet</b>. Nutzt beim Üben dieselben Sätze wie das Spiel:</p>
+      <p class="pnote" style="margin-top:8px">• <b>6&nbsp;·&nbsp;n = 5&nbsp;·&nbsp;n + n</b> → 6&nbsp;·&nbsp;8 = 40 + 8 = 48<br>• <b>7&nbsp;·&nbsp;n = 5&nbsp;·&nbsp;n + 2&nbsp;·&nbsp;n</b> → 7&nbsp;·&nbsp;8 = 40 + 16 = 56<br>• <b>9&nbsp;·&nbsp;n = 10&nbsp;·&nbsp;n − n</b> → 9&nbsp;·&nbsp;8 = 80 − 8 = 72<br>• <b>4&nbsp;·&nbsp;n</b> = die 2er-Aufgabe verdoppelt · <b>3&nbsp;·&nbsp;n = 2&nbsp;·&nbsp;n + n</b><br>• <b>5&nbsp;·&nbsp;n</b> = die Hälfte von 10&nbsp;·&nbsp;n</p>
+      <p class="pnote" style="margin-top:8px"><b>Warum nur 15 Aufgaben:</b> Von 100 bleiben durch Tauschaufgaben 55, und nach Kernaufgaben und Quadraten genau 15 übrig — 3·4, 3·6, 3·7, 3·8, 3·9, 4·6, 4·7, 4·8, 4·9, 6·7, 6·8, 6·9, 7·8, 7·9, 8·9. Das ist die Botschaft, die Hanna entlastet: sie muss 15 lernen, nicht 100. Erfahrungsgemäß am zähesten sind 6·7, 6·8, 7·8 und 6·9.</p>
+      <p class="pnote" style="margin-top:8px"><b>Wie üben:</b> kurz und häufig schlägt lang und selten — 5 bis 10 Minuten an vier bis fünf Tagen. Gemischt üben statt eine Reihe am Stück. Und erst wenn die Strategie sitzt, auf Tempo gehen: die Prüfungen im Spiel gehen deshalb bewusst erst am Ende eines Wegs auf.</p>
     </div>
     <div class="card psec">
       <p class="pnote"><b>Mit euren Zehnerblöcken am Tisch</b> (gleiche Bilder wie im Spiel): 1.&nbsp;<b>Zahlen bauen:</b> Du nennst eine Zahl (z.&nbsp;B. 43), Hanna legt sie mit Stangen und Würfeln — danach andersrum: du legst, sie nennt die Zahl. 2.&nbsp;<b>Zehner-Zauber:</b> Sie legt 57, du sagst „minus 20" — sie nimmt 2 Stangen weg. Danach immer fragen: „Was ist mit den Einern passiert?" (Nichts!) 3.&nbsp;<b>Tauschen:</b> 10 Einerwürfel gegen 1 Stange tauschen und zurück — dieses Tauschen ist genau die Zehnerbrücke aus Level 4. Erst am Tisch, dann im Spiel, mit denselben Wörtern („Nur die Zehner tanzen, die Einer bleiben sitzen").</p>
@@ -476,14 +523,16 @@ function yesterdayStr(){var d=new Date();d.setDate(d.getDate()-1);return dstr(d)
 
 /* ---------- State ---------- */
 var KEY='hannah-mathe-v1';
-var DEFAULT={gems:0,crowns:{plus:[0,0,0,0,0],minus:[0,0,0,0,0],mal:[0,0,0,0,0]},master:{plus:false,minus:false,mal:false},school:[false,false,false],weak:{},stats:{},daily:{date:'',count:0},streak:0,lastCrownDate:'',sound:true,
-  badges:{},chain:0,bestChain:0,weakEver:0,bestDay:0,bestStreak:0,mixBest:0,seen:0,kammerInit:false};
+var DEFAULT={gems:0,crowns:{plus:[0,0,0,0,0],minus:[0,0,0,0,0],mal:[0,0,0,0,0]},master:{plus:false,minus:false,mal:false},school:[false,false,false,false,false,false,false],weak:{},stats:{},daily:{date:'',count:0},streak:0,lastCrownDate:'',sound:true,
+  badges:{},chain:0,bestChain:0,weakEver:0,bestDay:0,bestStreak:0,mixBest:0,seen:0,kammerInit:false,facts:{}};
 function load(){try{var raw=localStorage.getItem(KEY);return raw?JSON.parse(raw):null;}catch(e){return null;}}
 function save(){scanBadges(false);try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){} syncPush();}
 var state=(function(){var s=load();var base=JSON.parse(JSON.stringify(DEFAULT));if(!s)return base;
   for(var k in base){if(s[k]!==undefined)base[k]=s[k];}
   ['plus','minus','mal'].forEach(function(m){if(!base.crowns[m])base.crowns[m]=[0,0,0,0,0];});
   if(!base.badges||typeof base.badges!=='object'||base.badges.constructor===Array)base.badges={};
+  if(!base.facts||typeof base.facts!=='object'||base.facts.constructor===Array)base.facts={};
+  while(base.school.length<7)base.school.push(false);
   return base;})();
 
 var RANKS=[{n:'Burgfräulein',min:0},{n:'Hofdame',min:60},{n:'Ritterin',min:150},{n:'Prinzessin',min:300},{n:'Mathe-Königin',min:550}];
@@ -503,7 +552,7 @@ function mergeStates(a,b){
     for(var i=0;i<5;i++)m.crowns[k][i]=Math.max(((a.crowns||{})[k]||[])[i]||0,((b.crowns||{})[k]||[])[i]||0);
     m.master[k]=!!(((a.master||{})[k])||((b.master||{})[k]));
   });
-  for(var i2=0;i2<3;i2++)m.school[i2]=!!(((a.school||[])[i2])||((b.school||[])[i2]));
+  for(var i2=0;i2<m.school.length;i2++)m.school[i2]=!!(((a.school||[])[i2])||((b.school||[])[i2]));
   m.streak=Math.max(a.streak||0,b.streak||0);
   m.lastCrownDate=((a.lastCrownDate||'')>(b.lastCrownDate||''))?(a.lastCrownDate||''):(b.lastCrownDate||'');
   var ad=a.daily||{date:'',count:0},bd=b.daily||{date:'',count:0};
@@ -524,6 +573,16 @@ function mergeStates(a,b){
     Object.keys(src).forEach(function(k){if(src[k])bd[k]=true;});
   });
   m.badges=bd;
+  /* 1x1-Wissensstand: pro Aufgabe das Maximum aus beiden Geräten */
+  var fc={};
+  [a.facts,b.facts].forEach(function(src){
+    if(!src||typeof src!=='object')return;
+    Object.keys(src).forEach(function(k){
+      var v=src[k]||{},c=fc[k]||{g:0,f:0};
+      fc[k]={g:Math.max(c.g,v.g||0),f:Math.max(c.f,v.f||0)};
+    });
+  });
+  m.facts=fc;
   ['chain','bestChain','weakEver','bestDay','bestStreak','mixBest','seen'].forEach(function(k){
     m[k]=Math.max(a[k]||0,b[k]||0);
   });
@@ -612,7 +671,11 @@ var BADGES=[
  {id:'s0', g:'Zauberschule', n:'Bündel-Zauber', c:C_GOLD, e:EM.book, d:'Schaff die 1. Lektion: Zehner und Einer.', ok:function(){return !!state.school[0];}},
  {id:'s1', g:'Zauberschule', n:'Zehner-Zauber', c:C_GOLD, e:EM.book, d:'Schaff die 2. Lektion: 57 − 20 ganz leicht.', ok:function(){return !!state.school[1];}},
  {id:'s2', g:'Zauberschule', n:'Brücken-Zauber', c:C_GOLD, e:EM.book, d:'Schaff die 3. Lektion: die Zehnerbrücke.', ok:function(){return !!state.school[2];}},
- {id:'s_all', g:'Zauberschule', n:'Zauberschul-Diplom', c:C_GOLD, e:EM.star, d:'Schaff alle 3 Lektionen der Zauberschule.', ok:function(){return state.school.every(Boolean);}},
+ {id:'s3', g:'Zauberschule', n:'Zauber-Dreh', c:C_GOLD, e:EM.book, d:'Schaff die Lektion über Tauschaufgaben: 6 · 8 = 8 · 6.', ok:function(){return !!state.school[3];}},
+ {id:'s4', g:'Zauberschule', n:'Königs-Reihen', c:C_GOLD, e:EM.book, d:'Schaff die Lektion über die 2er, 5er und 10er.', ok:function(){return !!state.school[4];}},
+ {id:'s5', g:'Zauberschule', n:'Zerschneiderin', c:C_GOLD, e:EM.book, d:'Schaff die Lektion „Zerschneiden": 7 · 8 = 5 · 8 + 2 · 8.', ok:function(){return !!state.school[5];}},
+ {id:'s6', g:'Zauberschule', n:'Neuner-Trick', c:C_GOLD, e:EM.book, d:'Schaff die Lektion über die 9er-Reihe.', ok:function(){return !!state.school[6];}},
+ {id:'s_all', g:'Zauberschule', n:'Zauberschul-Diplom', c:C_GOLD, e:EM.star, d:'Schaff alle 7 Lektionen der Zauberschule.', ok:function(){return state.school.every(Boolean);}},
  /* --- Fleiß --- */
  {id:'d1', g:'Fleiß', n:'Erste Tageskrone', c:C_FLEISS, e:EM.flame, d:'Sammle an einem Tag 20 Juwelen.', ok:function(){return (state.bestStreak||0)>=1;}},
  {id:'d3', g:'Fleiß', n:'3 Tage am Stück', c:C_FLEISS, e:EM.flame, d:'Hol dir 3 Tage hintereinander die Tageskrone.', ok:function(){return (state.bestStreak||0)>=3;}},
@@ -625,6 +688,8 @@ var BADGES=[
  {id:'c_mix', g:'Können', n:'Mix-Meisterin', c:C_KOENNEN, e:EM.gem, d:'Schaff im Königs-Mix 10 von 10.', ok:function(){return (state.mixBest||0)>=10;}},
  {id:'c_weak', g:'Können', n:'Einmaleins-Jägerin', c:C_KOENNEN, e:EM.bolt, d:'Räum den Übungsschatz wieder komplett leer.', ok:function(){return (state.weakEver||0)>=3&&weakCount()===0;}},
  {id:'c_all', g:'Können', n:'Kronen-Sammlerin', c:C_KOENNEN, e:EM.crown, d:'Sammle alle 45 Kronen im ganzen Königreich.', ok:function(){return crownTotal()>=45;}},
+ {id:'c_hard', g:'Können', n:'Die harten 15', c:C_KOENNEN, e:EM.bolt, d:'Lass alle 15 kniffligen Einmaleins-Aufgaben auf der Königs-Tafel golden leuchten.', ok:function(){return hardDone()>=HARD.length;}},
+ {id:'c_tafel', g:'Können', n:'Tafel-Königin', c:C_KOENNEN, e:EM.star, d:'Bring die ganze Königs-Tafel zum Leuchten — alle 55 Aufgaben.', ok:function(){return allFacts().every(function(p){return factStatus(p[0],p[1])===3;});}},
  /* --- Schatz --- */
  {id:'g100', g:'Schatz', n:'100 Juwelen', c:C_SCHATZ, e:EM.gem, d:'Sammle 100 Kronjuwelen.', ok:function(){return state.gems>=100;}},
  {id:'g250', g:'Schatz', n:'250 Juwelen', c:C_SCHATZ, e:EM.gem, d:'Sammle 250 Kronjuwelen.', ok:function(){return state.gems>=250;}},
@@ -660,6 +725,94 @@ function initKammer(){
 }
 
 function malKey(a,b){return Math.min(a,b)+'x'+Math.max(a,b);}
+
+/* ---------- Einmaleins: Ableiten statt Zusammenzählen ----------
+   Die Kernaufgaben (1er, 2er, 5er, 10er) und die Quadrataufgaben sind die Anker.
+   Alles andere wird daraus abgeleitet. Bewusst NICHT als Plus-Kette (8+8+8+…) —
+   daraus wird zählendes Rechnen, das bei den großen Aufgaben zusammenbricht. */
+var KERN=[1,2,5,10];
+/* Welcher Faktor zerlegt wird: der mit dem einfachsten Trick zuerst. */
+var DERIVE_ORDER=[9,3,4,6,7,8];
+/* Die 15 Aufgaben, die nach Kernaufgaben und Quadraten wirklich übrig bleiben. */
+function isHardFact(a,b){return KERN.indexOf(a)<0&&KERN.indexOf(b)<0&&a!==b;}
+function malDerive(a,b){
+  if(!isHardFact(a,b))return null;
+  var d=null;
+  for(var i=0;i<DERIVE_ORDER.length;i++){if(a===DERIVE_ORDER[i]||b===DERIVE_ORDER[i]){d=DERIVE_ORDER[i];break;}}
+  if(d===null)return null;
+  var o=(a===d)?b:a;
+  if(d===9)return {d:9,kind:'minus',o:o,base:10,take:1,p1:10*o,p2:o,res:9*o,
+    text:'Neunmal ist fast zehnmal: 10 · '+o+' = '+(10*o)+' — davon eine Reihe ('+o+') wieder weg.'};
+  if(d===3)return {d:3,kind:'plus',o:o,s1:2,s2:1,p1:2*o,p2:o,res:3*o,
+    text:'Dreimal ist zweimal und noch einmal: 2 · '+o+' = '+(2*o)+', plus '+o+'.'};
+  if(d===4)return {d:4,kind:'plus',o:o,s1:2,s2:2,p1:2*o,p2:2*o,res:4*o,
+    text:'Viermal ist die 2er-Aufgabe verdoppelt: 2 · '+o+' = '+(2*o)+' — und nochmal so viel.'};
+  if(d===6)return {d:6,kind:'plus',o:o,s1:5,s2:1,p1:5*o,p2:o,res:6*o,
+    text:'Sechsmal ist fünfmal und noch einmal: 5 · '+o+' = '+(5*o)+', plus '+o+'.'};
+  if(d===7)return {d:7,kind:'plus',o:o,s1:5,s2:2,p1:5*o,p2:2*o,res:7*o,
+    text:'Siebenmal ist fünfmal und zweimal: 5 · '+o+' = '+(5*o)+', plus 2 · '+o+' = '+(2*o)+'.'};
+  return {d:8,kind:'minus',o:o,base:10,take:2,p1:10*o,p2:2*o,res:8*o,
+    text:'Achtmal ist zehnmal minus zweimal: 10 · '+o+' = '+(10*o)+', davon 2 · '+o+' = '+(2*o)+' weg.'};
+}
+function mdots(n){var h='';for(var i=0;i<n;i++)h+='<span class="md"></span>';return h;}
+function mrowHTML(cols,cls){return '<div class="mrow '+(cls||'')+'">'+mdots(cols)+'</div>';}
+function malField(dv){
+  var h='<div class="marr">',i;
+  if(dv.kind==='plus'){
+    for(i=0;i<dv.s1;i++)h+=mrowHTML(dv.o,'');
+    h+='<div class="mcut"></div>';
+    for(i=0;i<dv.s2;i++)h+=mrowHTML(dv.o,'blue');
+  }else{
+    for(i=0;i<dv.base;i++)h+=mrowHTML(dv.o,(i>=dv.base-dv.take)?'gone':'');
+  }
+  return h+'</div>';
+}
+/* Tipp für die Anker-Aufgaben: da ist das Punktefeld richtig, nicht schädlich. */
+function malKernHint(a,b){
+  var o,h;
+  if(a===1||b===1){o=(a===1)?b:a;return '<p><b>1 · '+o+'</b> ist einfach die '+o+' selbst — einmal genommen.</p>';}
+  if(a===10||b===10){o=(a===10)?b:a;
+    return '<p><b>10er-Aufgabe:</b> '+o+' Zehnerstangen.</p><div class="blocks">'+rods(o,'')+'</div>'
+      +'<p>'+o+' Zehner — sprich: '+o+'-mal zehn.</p>';}
+  if(a===2||b===2){o=(a===2)?b:a;
+    return '<p><b>2 · '+o+' heißt verdoppeln:</b> '+o+' und nochmal '+o+'.</p>'
+      +'<div class="marr">'+mrowHTML(o,'')+mrowHTML(o,'blue')+'</div>';}
+  if(a===5||b===5){o=(a===5)?b:a;
+    h='<p><b>5 · '+o+' ist die Hälfte von 10 · '+o+'.</b></p><p>10 · '+o+' = '+(10*o)+' — und die Hälfte davon?</p><div class="marr">';
+    for(var i=0;i<5;i++)h+=mrowHTML(o,'');
+    return h+'</div>';}
+  h='<p><b>'+a+' · '+a+' ist eine Quadrataufgabe</b> — '+a+' Reihen mit '+a+' Punkten. Die merkt man sich am besten als Bild.</p><div class="marr">';
+  for(var j=0;j<a;j++)h+=mrowHTML(a,'');
+  return h+'</div>';
+}
+function malHint(a,b){
+  var dv=malDerive(a,b);
+  if(!dv)return malKernHint(a,b);
+  /* Wird der hintere Faktor zerlegt, erst den Zauber-Dreh zeigen — sonst passt
+     das Punktefeld nicht zur Aufgabe, die auf dem Bildschirm steht. */
+  var swap=(a!==dv.d)?'<p><b>Zauber-Dreh zuerst:</b> '+a+' · '+b+' ist dasselbe wie '+dv.d+' · '+dv.o+'.</p>':'';
+  return '<p><b>'+a+' · '+b+'</b> — zerschneide sie in zwei Aufgaben, die du schon kannst!</p>'
+    +swap
+    +'<p>'+dv.text+'</p>'
+    +malField(dv)
+    +'<p>'+(dv.kind==='plus'
+        ? '<b>'+dv.p1+'</b> und <b>'+dv.p2+'</b> — jetzt nur noch zusammenzählen!'
+        : '<b>'+dv.p1+'</b> minus <b>'+dv.p2+'</b> — jetzt nur noch abziehen!')+'</p>';
+}
+/* Wissensstand pro Aufgabe (Tauschaufgaben zählen als eine) */
+function factRec(a,b){var k=malKey(a,b);if(!state.facts[k])state.facts[k]={g:0,f:0};return state.facts[k];}
+function factStatus(a,b){
+  var f=state.facts[malKey(a,b)];
+  if(!f||(!f.g&&!f.f))return 0;      // noch nicht dran
+  if(f.g>=2)return 3;                 // sitzt sofort
+  if(f.g>=1)return 2;                 // wackelt noch
+  return 1;                           // noch üben
+}
+/* Die 55 verschiedenen Aufgaben — Tauschaufgaben zählen als eine. */
+function allFacts(){var o=[],a,b;for(a=1;a<=10;a++)for(b=a;b<=10;b++)o.push([a,b]);return o;}
+/* Die 15, die nach Kernaufgaben und Quadraten übrig bleiben. */
+var HARD=(function(){var o=[],a,b;for(a=1;a<=10;a++)for(b=a+1;b<=10;b++)if(isHardFact(a,b))o.push([a,b]);return o;})();
+function hardDone(){var n=0;HARD.forEach(function(p){if(factStatus(p[0],p[1])===3)n++;});return n;}
 function pickWeak(tables){
   var keys=Object.keys(state.weak).filter(function(k){
     var p=k.split('x').map(Number);
@@ -794,6 +947,23 @@ function renderKammer(){
       showDialog({title:b.n,text:(state.badges[b.id]?'Geschafft! ':'Das musst du dafür tun: ')+b.d,okLabel:'Ok',cancel:false});
     });
   });
+
+  /* Königs-Tafel: 10x10, gespiegelt gleich eingefärbt — das macht die Tauschaufgaben sichtbar. */
+  var hd=hardDone(),sitzt=0;
+  allFacts().forEach(function(p){if(factStatus(p[0],p[1])===3)sitzt++;});
+  $('#kTafelCount').innerHTML='<b>'+hd+'</b> von 15 kniffligen Aufgaben sitzen · '+sitzt+' von 55 insgesamt';
+  var th='<div class="tc hd"></div>',x,y;
+  for(x=1;x<=10;x++)th+='<div class="tc hd">'+x+'</div>';
+  for(y=1;y<=10;y++){
+    th+='<div class="tc hd">'+y+'</div>';
+    for(x=1;x<=10;x++){
+      th+='<div class="tc s'+factStatus(y,x)+(isHardFact(y,x)?' hard':'')+'">'+(y*x)+'</div>';
+    }
+  }
+  $('#kTafel').innerHTML=th;
+  $('#kTafelNote').textContent=hd>=HARD.length
+    ? 'Alle 15 kniffligen Aufgaben sitzen. Die Tafel gehört dir, Hanna!'
+    : 'Die weiß umrandeten Felder sind die 15 kniffligen. Jede Aufgabe steht zweimal drin — oben rechts und unten links ist dieselbe.';
 
   var tot=crownTotal();
   $('#kCrownCount').innerHTML='<b>'+tot+'</b> von 45 Kronen erobert';
@@ -939,7 +1109,11 @@ function check(){
   if(v===t.ans){
     t.st=t.revealed?'fixed':'right';
     if(!t.revealed&&t.isBase)R.score++;
-    if(t.sym==='·'&&!t.revealed){var k=malKey(t.a,t.b);if(state.weak[k]){state.weak[k]--;if(state.weak[k]<=0)delete state.weak[k];}}
+    if(t.sym==='·'&&!t.revealed){
+      var k=malKey(t.a,t.b);if(state.weak[k]){state.weak[k]--;if(state.weak[k]<=0)delete state.weak[k];}
+      /* Nur zählen, was sie wirklich selbst wusste — ohne Tipp, ohne Fehlversuch. */
+      if(!t.hinted&&t.attempts===0)factRec(t.a,t.b).g++;
+    }
     /* Blitzserie: nur zählen, wenn ohne Tipp und ohne Fehlversuch gelöst */
     if(!t.revealed&&!t.hinted&&t.attempts===0){
       state.chain=(state.chain||0)+1;
@@ -970,6 +1144,7 @@ function revealSolution(t){
   if(t.sym==='·'){
     var k=malKey(t.a,t.b);state.weak[k]=Math.min(8,(state.weak[k]||0)+2);
     if(weakCount()>(state.weakEver||0))state.weakEver=weakCount();
+    var fr=factRec(t.a,t.b);fr.f++;if(fr.g>0)fr.g--;   // wackelt wieder
     save();
   }
   if(!R.test&&t.isBase&&R.queue.length<14){
@@ -985,17 +1160,10 @@ function revealSolution(t){
 function rods(n,cls){var h='';for(var i=0;i<n;i++)h+='<span class="rod '+cls+'"></span>';return h;}
 function rodsMinus(aT,bT){var h='';for(var i=0;i<aT;i++)h+='<span class="rod '+(i>=aT-bT?'cross':'')+'"></span>';return h;}
 function ones(n,cls){var h='';for(var i=0;i<n;i++)h+='<span class="one '+(cls||'')+'"></span>';return h;}
-function arrayDots(a,b){
-  var h='<div class="arr">';
-  for(var i=0;i<a;i++)h+='<div class="arow">'+ones(b)+'</div>';
-  return h+'</div>';
-}
 function hintHTML(t,withSol){
   var aT=Math.floor(t.a/10),aO=t.a%10,bT=Math.floor(t.b/10),bO=t.b%10,body='';
   if(t.sym==='·'){
-    var parts=[];for(var i=0;i<t.a;i++)parts.push(t.b);
-    body='<p><b>'+t.a+' · '+t.b+'</b> heißt: '+t.a+'-mal die '+t.b+'</p>'
-        +'<p>'+parts.join(' + ')+'</p>'+arrayDots(t.a,t.b);
+    body=malHint(t.a,t.b);
   }else if(t.sym==='+'){
     if(aO===0&&bO===0){
       body='<div class="blocks">'+rods(aT,'')+'<span class="op">+</span>'+rods(bT,'blue')+'</div>'
@@ -1202,7 +1370,11 @@ $('#dlgInput').addEventListener('keydown',function(e){if(e.key==='Enter'){e.prev
 var SCHOOL=[
   {t:'Was sind Zehner und Einer?',d:'Punkte zaubern und bündeln',steps:3},
   {t:'Der Zehner-Zauber',d:'57 − 20 ganz leicht',steps:3},
-  {t:'Die Zehnerbrücke',d:'Der Trick für 47 + 6',steps:3}
+  {t:'Die Zehnerbrücke',d:'Der Trick für 47 + 6',steps:3},
+  {t:'Der Zauber-Dreh',d:'Warum du nur die Hälfte lernen musst',steps:3},
+  {t:'Die vier Königs-Reihen',d:'Deine Anker: 1er, 2er, 5er, 10er',steps:3},
+  {t:'Zerschneiden',d:'Der Trick für 7 · 8',steps:3},
+  {t:'Der Neuner-Trick',d:'9 · 8 in zwei Sekunden',steps:3}
 ];
 var SL=null;
 function renderSchool(){
@@ -1395,10 +1567,176 @@ function renderStep(){
       lsGoal('53! Du bist über die Zehnerbrücke gegangen: 47 + 6 = 53.');
     });
   }
-  else{
+  else if(k==='2-2'){
     lsSet('Der Brücken-Trick für immer: Erst bis zum vollen Zehner, dann den Rest. So kommst du sicher über jede Zehnerbrücke!','Mit den Blöcken: Leg die 47, fülle die Einer auf 10 auf — und TAUSCHE die 10 Würfel gegen 1 Stange. Dieses Tauschen ist der ganze Trick!');
     $('#lsStage').innerHTML='<div class="bridge"><span class="bnum gold">47</span><span class="bstep">+3 →</span><span class="bnum gold">50</span><span class="bstep">+3 →</span><span class="bnum gold">53</span></div>';
     lsGoal();
+  }
+  /* ===== Lektion 4: Der Zauber-Dreh (Tauschaufgaben) ===== */
+  else if(k==='3-0'){
+    lsSet('Das sind 3 Reihen mit 4 Punkten — also 3 · 4 = 12. Jetzt dreh das Feld einmal um!','Leg 3 Reihen mit 4 Bausteinen und dreh das Brett um eine Vierteldrehung.');
+    var dTurn=false;
+    $('#lsStage').innerHTML='<div id="dvA" style="width:100%"></div>';
+    var paintTurn=function(){
+      var rr=dTurn?4:3,cc=dTurn?3:4,hh='<div class="marr">';
+      for(var q=0;q<rr;q++)hh+=mrowHTML(cc,dTurn?'blue':'');
+      $('#dvA').innerHTML=hh+'</div><div class="msum">'+rr+' · '+cc+' = <span class="tz">12</span></div>';
+    };
+    $('#lsControls').innerHTML='<button class="bigbtn" id="btnTurn">Feld drehen ↻</button>';
+    $('#btnTurn').addEventListener('click',function(){
+      if(dTurn)return;
+      dTurn=true;paintTurn();$('#lsControls').style.display='none';
+      lsGoal('Zauberei! Gedreht sind es 4 Reihen mit 3 Punkten: 4 · 3. Es sind genau dieselben Punkte — immer noch 12!');
+    });
+    paintTurn();
+  }
+  else if(k==='3-1'){
+    lsSet('Du hast dir gemerkt: 6 · 8 = 48. Was ist dann 8 · 6?','');
+    $('#lsStage').innerHTML='<div class="msum">6 · 8 = <span class="tz">48</span></div><div class="msum" style="margin-top:14px">8 · 6 = ?</div>';
+    $('#lsControls').innerHTML='<button class="bigbtn qz" data-q="14">14</button><button class="bigbtn qz" data-q="48">48</button><button class="bigbtn qz" data-q="68">68</button>';
+    wireQuiz(48,function(){$('#lsControls').style.display='none';lsGoal('Richtig, auch 48! Gedreht ist es dieselbe Aufgabe — du musst sie nur EINMAL lernen.');});
+  }
+  else if(k==='3-2'){
+    lsSet('Und jetzt die beste Nachricht überhaupt. Im großen Einmaleins stecken 100 Aufgaben. Zaubere die Tauschaufgaben weg!','');
+    var mStage=0;
+    $('#lsStage').innerHTML='<div class="msum" id="mCnt" style="font-size:36px">100 Aufgaben</div><p class="mlabel" id="mLbl">So viele sind es am Anfang.</p>';
+    $('#lsControls').innerHTML='<button class="bigbtn" id="btnMagic">Tauschaufgaben wegzaubern</button>';
+    $('#btnMagic').addEventListener('click',function(){
+      mStage++;
+      if(mStage===1){
+        $('#mCnt').innerHTML='<span class="tz">55</span> Aufgaben';
+        $('#mLbl').textContent='Jede Aufgabe gibt es zweimal — die Hälfte fällt einfach weg!';
+        $('#btnMagic').textContent='Jetzt die Königs-Reihen wegzaubern';
+      }else{
+        $('#mCnt').innerHTML='nur noch <span class="tz">15</span>';
+        $('#mLbl').textContent='Die 1er, 2er, 5er und 10er und die Quadrataufgaben lernst du fast von allein.';
+        $('#lsControls').style.display='none';
+        lsGoal('Nur 15 Aufgaben musst du wirklich üben, Hanna — keine 100! Die schaffst du locker.');
+      }
+    });
+  }
+  /* ===== Lektion 5: Die vier Königs-Reihen (Anker) ===== */
+  else if(k==='4-0'){
+    lsSet('Die 2er-Reihe ist die leichteste von allen: 2 · 7 heißt einfach die 7 verdoppeln. Tipp auf „Verdoppeln"!','Nimm 7 Bausteine und leg genauso viele gleich noch mal daneben.');
+    var dDbl=false;
+    $('#lsStage').innerHTML='<div id="dvB" style="width:100%"></div>';
+    var paintDbl=function(){
+      var hh='<div class="marr">'+mrowHTML(7,'');
+      if(dDbl)hh+=mrowHTML(7,'blue');
+      $('#dvB').innerHTML=hh+'</div><div class="msum">'+(dDbl?'2 · 7 = <span class="tz">14</span>':'1 · 7 = 7')+'</div>';
+    };
+    $('#lsControls').innerHTML='<button class="bigbtn" id="btnDbl">Verdoppeln!</button>';
+    $('#btnDbl').addEventListener('click',function(){
+      if(dDbl)return;
+      dDbl=true;paintDbl();$('#lsControls').style.display='none';
+      lsGoal('7 und nochmal 7 sind 14. Die ganze 2er-Reihe ist nichts anderes als Verdoppeln!');
+    });
+    paintDbl();
+  }
+  else if(k==='4-1'){
+    lsSet('Die 10er-Reihe kannst du auch schon: 10 · 6 sind einfach 6 Zehnerstangen. Wie viel ist das?','Leg 6 Zehnerstangen hin und zähl in Zehnerschritten: 10, 20, 30 …');
+    $('#lsStage').innerHTML='<div class="blocks">'+rods(6,'')+'</div><div class="msum">10 · 6 = ?</div>';
+    $('#lsControls').innerHTML='<button class="bigbtn qz" data-q="16">16</button><button class="bigbtn qz" data-q="60">60</button><button class="bigbtn qz" data-q="66">66</button>';
+    wireQuiz(60,function(){$('#lsControls').style.display='none';lsGoal('Genau, 60 — 6 Zehner! Bei der 10er-Reihe hängst du einfach eine Null an.');});
+  }
+  else if(k==='4-2'){
+    lsSet('Und jetzt der Trick für die 5er-Reihe: 10 · 8 = 80. Schiebe die Hälfte der Reihen weg — dann steht da 5 · 8!','Leg 10 Reihen mit 8 Steinen und schieb 5 Reihen zur Seite.');
+    var gone5=0;
+    var h5='<div class="marr" id="fld5">';
+    for(var i5=0;i5<10;i5++)h5+='<div class="mrow clickable">'+mdots(8)+'</div>';
+    $('#lsStage').innerHTML=h5+'</div><div class="msum" id="sum5">10 · 8 = 80</div>';
+    document.querySelectorAll('#fld5 .mrow').forEach(function(r5){
+      r5.addEventListener('click',function(){
+        if(gone5>=5||r5.classList.contains('gone'))return;
+        r5.classList.add('gone');gone5++;
+        if(gone5===5){
+          $('#sum5').innerHTML='5 · 8 = <span class="tz">40</span>';
+          lsGoal('40 — genau die Hälfte von 80! So kriegst du jede 5er-Aufgabe: nimm die 10er-Aufgabe und halbiere sie.');
+        }
+      });
+    });
+  }
+  /* ===== Lektion 6: Zerschneiden (Ableiten über die 5er-Reihe) ===== */
+  else if(k==='5-0'){
+    lsSet('Jetzt die große Zauberei: 6 · 8 — 6 Reihen mit 8 Punkten. Tipp die UNTERSTE Reihe an und schneide sie ab!','Leg 6 Reihen mit 8 Steinen und schieb die unterste ein Stück nach unten.');
+    var h6='<div class="marr" id="fld6">';
+    for(var i6=0;i6<6;i6++)h6+='<div class="mrow'+(i6===5?' clickable':'')+'">'+mdots(8)+'</div>';
+    $('#lsStage').innerHTML=h6+'</div><div class="msum" id="sum6">6 · 8 = ?</div>';
+    var rows6=document.querySelectorAll('#fld6 .mrow'),last6=rows6[5];
+    last6.addEventListener('click',function(){
+      if(last6.classList.contains('blue'))return;
+      last6.classList.add('blue');last6.classList.remove('clickable');
+      var cut6=document.createElement('div');cut6.className='mcut';
+      $('#fld6').insertBefore(cut6,last6);
+      $('#sum6').innerHTML='5 · 8 = <span class="tz">40</span> &nbsp;+&nbsp; 8 &nbsp;=&nbsp; <span class="tz">48</span>';
+      lsGoal('Schau: oben steht 5 · 8 = 40, unten liegt noch eine 8. 40 + 8 = 48. Die 5er-Reihe kennst du — der Rest ist geschenkt!');
+    });
+  }
+  else if(k==='5-1'){
+    lsSet('Und jetzt die berühmteste schwere Aufgabe: 7 · 8. Schneide wieder nach der 5. Reihe — tipp die beiden untersten Reihen an!','Sag dabei laut: „Fünf mal acht und zwei mal acht."');
+    var cut7=0;
+    var h7='<div class="marr" id="fld7">';
+    for(var i7=0;i7<7;i7++)h7+='<div class="mrow'+(i7>=5?' clickable':'')+'">'+mdots(8)+'</div>';
+    $('#lsStage').innerHTML=h7+'</div><div class="msum" id="sum7">7 · 8 = ?</div>';
+    var rows7=document.querySelectorAll('#fld7 .mrow');
+    [rows7[5],rows7[6]].forEach(function(r7){
+      r7.addEventListener('click',function(){
+        if(r7.classList.contains('blue'))return;
+        r7.classList.add('blue');r7.classList.remove('clickable');cut7++;
+        if(cut7===2){
+          var c7=document.createElement('div');c7.className='mcut';
+          $('#fld7').insertBefore(c7,rows7[5]);
+          $('#sum7').innerHTML='5 · 8 = <span class="tz">40</span> &nbsp;+&nbsp; 2 · 8 = <span class="tz">16</span>';
+          lsGoal('40 und 16 — zusammen 56! Zwei leichte Aufgaben statt einer schweren. Das ist der Zerschneide-Trick.');
+        }
+      });
+    });
+  }
+  else if(k==='5-2'){
+    lsSet('Letzte Prüfung: 6 · 7. Welcher Weg ist der richtige?','');
+    $('#lsStage').innerHTML='<div class="msum">6 · 7 = ?</div>';
+    $('#lsControls').innerHTML='<button class="bigbtn qz" data-q="a">5 · 7 + 7</button><button class="bigbtn qz" data-q="b">6 + 7</button><button class="bigbtn qz" data-q="c">5 · 7 + 6</button>';
+    wireQuiz('a',function(){
+      $('#lsControls').style.display='none';
+      $('#lsStage').innerHTML='<div class="msum">6 · 7 = 5 · 7 + 7</div><div class="msum">35 + 7 = <span class="tz">42</span></div>';
+      lsGoal('Genau! 5 · 7 sind 35, plus noch eine 7 macht 42. Merk dir: sechsmal heißt fünfmal und noch einmal.');
+    });
+  }
+  /* ===== Lektion 7: Der Neuner-Trick ===== */
+  else if(k==='6-0'){
+    lsSet('9 · 8 sieht schwer aus — ist es aber nicht. Hier sind 10 Reihen mit 8: das sind 80. Nimm EINE Reihe weg!','Leg 10 Reihen mit 8 Steinen und nimm eine weg.');
+    var h9='<div class="marr" id="fld9">';
+    for(var i9=0;i9<10;i9++)h9+='<div class="mrow'+(i9===9?' clickable':'')+'">'+mdots(8)+'</div>';
+    $('#lsStage').innerHTML=h9+'</div><div class="msum" id="sum9">10 · 8 = 80</div>';
+    var rows9=document.querySelectorAll('#fld9 .mrow'),last9=rows9[9];
+    last9.addEventListener('click',function(){
+      if(last9.classList.contains('gone'))return;
+      last9.classList.add('gone');last9.classList.remove('clickable');
+      $('#sum9').innerHTML='80 − 8 = <span class="tz">72</span> &nbsp;→&nbsp; 9 · 8 = <span class="tz">72</span>';
+      lsGoal('80 minus 8 sind 72. Neunmal ist immer zehnmal minus einmal — das geht bei jeder Neuner-Aufgabe!');
+    });
+  }
+  else if(k==='6-1'){
+    lsSet('Probier es selbst: 10 · 6 = 60. Was ist dann 9 · 6?','Rechne laut: „Sechzig minus sechs."');
+    $('#lsStage').innerHTML='<div class="msum">10 · 6 = <span class="tz">60</span></div><div class="msum" style="margin-top:14px">9 · 6 = ?</div>';
+    $('#lsControls').innerHTML='<button class="bigbtn qz" data-q="50">50</button><button class="bigbtn qz" data-q="54">54</button><button class="bigbtn qz" data-q="66">66</button>';
+    wireQuiz(54,function(){$('#lsControls').style.display='none';lsGoal('54! 60 minus 6. Du hast den Neuner-Trick raus.');});
+  }
+  else{
+    lsSet('Zum Schluss ein Geheimnis: In der ganzen 9er-Reihe ergeben Zehner und Einer zusammen immer 9. Drück auf den Knopf!','Schreib die 9er-Reihe auf und zähl bei jedem Ergebnis die Ziffern zusammen.');
+    $('#lsStage').innerHTML='<p class="mlabel" id="nineHint">9 · 1, 9 · 2, 9 · 3 …</p>';
+    $('#lsControls').innerHTML='<button class="bigbtn" id="btnNine">Muster zeigen</button>';
+    $('#btnNine').addEventListener('click',function(){
+      var hn='<div style="width:100%">';
+      for(var n=1;n<=10;n++){
+        var v=9*n,z=Math.floor(v/10),e=v%10;
+        hn+='<div class="msum" style="font-size:15px; margin:2px 0">9 · '+n+' = <span class="tz">'+v+'</span>'
+          +'<span class="mlabel" style="display:inline; margin-left:8px">'+z+' + '+e+' = 9</span></div>';
+      }
+      $('#lsStage').innerHTML=hn+'</div>';
+      $('#lsControls').style.display='none';
+      lsGoal('Siehst du es? 27 → 2 + 7 = 9. 54 → 5 + 4 = 9. Immer neun! So kannst du jede Neuner-Aufgabe prüfen.');
+    });
   }
 }
 function finishLesson(){
