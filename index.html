@@ -212,6 +212,14 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
 .tlegend i{width:12px; height:12px; border-radius:4px; display:inline-block;}
 
 /* ---------- Schatzkammer ---------- */
+.mode-card.kartei{grid-column:1/-1; border-color:rgba(255,159,110,.5); background:rgba(255,159,110,.06);}
+.mode-card.kartei.zu{opacity:.5;}
+.duebadge{position:absolute; top:11px; right:11px; background:var(--gold); color:#231708; font-size:12px; font-weight:900; border-radius:99px; padding:3px 9px; font-variant-numeric:tabular-nums;}
+.boxrow{display:flex; gap:6px; margin:8px 0 2px;}
+.boxcell{flex:1; text-align:center; padding:7px 2px; border-radius:10px; background:rgba(255,255,255,.05); border:1px solid var(--line);}
+.boxcell b{display:block; font-size:16px; font-variant-numeric:tabular-nums;}
+.boxcell span{font-size:10px; color:var(--ink-dim);}
+.boxcell.full{border-color:var(--gold); background:rgba(255,201,77,.12);}
 .mode-card.kammer{grid-column:1/-1; border-color:rgba(159,231,255,.5); background:rgba(159,231,255,.06);}
 .newdot{position:absolute; top:11px; right:11px; background:var(--bad); color:#2A0E12; font-size:11px; font-weight:900; border-radius:99px; padding:3px 9px; letter-spacing:.3px;}
 .ksec{margin-bottom:20px;}
@@ -307,6 +315,10 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
       <button class="mode-card school" id="btnSchool">
         <svg class="gemicon" viewBox="0 0 24 24" fill="none" stroke="#FFC94D" stroke-width="2" stroke-linejoin="round"><path d="M12 5.5C10 4 7.5 3.5 4 3.5v14c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2v-14c-3.5 0-6 .5-8 2z"/><path d="M12 5.5v14" stroke-linecap="round"/></svg>
         <span class="mname">Zahlen-Zauberschule</span><span class="msub" id="schoolSub">Erst begreifen, dann rechnen</span><span class="mbadge"></span>
+      </button>
+      <button class="mode-card kartei" id="btnKartei">
+        <svg class="gemicon" viewBox="0 0 24 24" fill="none" stroke="#FF9F6E" stroke-width="2" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M7 6V4.5h10V6" stroke-linecap="round"/><path d="M8.5 11h7M8.5 14.5h4" stroke-linecap="round"/></svg>
+        <span class="mname">Kronjuwelen-Kartei</span><span class="msub" id="karteiSub">Jeden Tag ein paar Karten</span><span class="mbadge" id="karteiBadge"></span>
       </button>
       <button class="mode-card kammer" id="btnKammer">
         <svg class="gemicon" viewBox="0 0 24 24" fill="none" stroke="#9FE7FF" stroke-width="2" stroke-linejoin="round"><path d="M3 8.5h18v11H3z"/><path d="M3 8.5 5.5 4.5h13L21 8.5"/><path d="M12 8.5v11M9.5 12.5h5" stroke-linecap="round"/></svg>
@@ -428,6 +440,11 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
         <span><i style="background:rgba(255,255,255,.06)"></i>noch nicht dran</span>
       </div>
       <p class="ksub" id="kTafelNote" style="margin-top:10px"></p>
+      <div id="kBoxWrap" style="display:none">
+        <p class="ksub" style="margin:12px 0 0"><b style="color:var(--ink)">Deine Kartei</b> — je weiter rechts, desto sicherer sitzt die Karte.</p>
+        <div class="boxrow" id="kBoxes"></div>
+        <p class="ksub" id="kBoxNote" style="margin-top:2px"></p>
+      </div>
     </div>
 
     <div class="ksec">
@@ -457,6 +474,7 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
       <p class="pnote"><b>Einmaleins: die Tricks, die das Spiel beibringt.</b> Die Fachdidaktik ist hier eindeutig: Aufgaben wie 7&nbsp;·&nbsp;8 als 8+8+8+… zusammenzuzählen führt ins zählende Rechnen, das bei großen Aufgaben zusammenbricht. Stattdessen gibt es <b>Anker</b> (1er, 2er, 5er, 10er und die Quadrataufgaben) und daraus wird alles andere <b>abgeleitet</b>. Nutzt beim Üben dieselben Sätze wie das Spiel:</p>
       <p class="pnote" style="margin-top:8px">• <b>6&nbsp;·&nbsp;n = 5&nbsp;·&nbsp;n + n</b> → 6&nbsp;·&nbsp;8 = 40 + 8 = 48<br>• <b>7&nbsp;·&nbsp;n = 5&nbsp;·&nbsp;n + 2&nbsp;·&nbsp;n</b> → 7&nbsp;·&nbsp;8 = 40 + 16 = 56<br>• <b>9&nbsp;·&nbsp;n = 10&nbsp;·&nbsp;n − n</b> → 9&nbsp;·&nbsp;8 = 80 − 8 = 72<br>• <b>4&nbsp;·&nbsp;n</b> = die 2er-Aufgabe verdoppelt · <b>3&nbsp;·&nbsp;n = 2&nbsp;·&nbsp;n + n</b><br>• <b>5&nbsp;·&nbsp;n</b> = die Hälfte von 10&nbsp;·&nbsp;n</p>
       <p class="pnote" style="margin-top:8px"><b>Warum nur 15 Aufgaben:</b> Von 100 bleiben durch Tauschaufgaben 55, und nach Kernaufgaben und Quadraten genau 15 übrig — 3·4, 3·6, 3·7, 3·8, 3·9, 4·6, 4·7, 4·8, 4·9, 6·7, 6·8, 6·9, 7·8, 7·9, 8·9. Das ist die Botschaft, die Hanna entlastet: sie muss 15 lernen, nicht 100. Erfahrungsgemäß am zähesten sind 6·7, 6·8, 7·8 und 6·9.</p>
+      <p class="pnote" style="margin-top:8px"><b>Die Kronjuwelen-Kartei</b> ist eine echte Leitner-Kartei mit fünf Fächern: richtig beantwortet wandert eine Karte ein Fach weiter und kommt erst nach 1, 3, 7 bzw. 14 Tagen wieder; falsch beantwortet fällt sie zurück in Fach 1 und ist sofort wieder dran. Eine Runde sind höchstens 12 Karten — überwiegend Fälliges plus bis zu 4 neue, gemischt. Sie <b>öffnet sich bewusst erst</b>, wenn die vier Einmaleins-Lektionen geschafft sind: Wiederholungsplanung bringt nichts, solange es keine Strategie zum Abrufen gibt. Gezählt wird nur, was sie ohne Tipp und ohne Fehlversuch wusste. Die 1er-Reihe ist absichtlich nicht in der Kartei.</p>
       <p class="pnote" style="margin-top:8px"><b>Wie üben:</b> kurz und häufig schlägt lang und selten — 5 bis 10 Minuten an vier bis fünf Tagen. Gemischt üben statt eine Reihe am Stück. Und erst wenn die Strategie sitzt, auf Tempo gehen: die Prüfungen im Spiel gehen deshalb bewusst erst am Ende eines Wegs auf.</p>
     </div>
     <div class="card psec">
@@ -524,7 +542,7 @@ function yesterdayStr(){var d=new Date();d.setDate(d.getDate()-1);return dstr(d)
 /* ---------- State ---------- */
 var KEY='hannah-mathe-v1';
 var DEFAULT={gems:0,crowns:{plus:[0,0,0,0,0],minus:[0,0,0,0,0],mal:[0,0,0,0,0]},master:{plus:false,minus:false,mal:false},school:[false,false,false,false,false,false,false],weak:{},stats:{},daily:{date:'',count:0},streak:0,lastCrownDate:'',sound:true,
-  badges:{},chain:0,bestChain:0,weakEver:0,bestDay:0,bestStreak:0,mixBest:0,seen:0,kammerInit:false,facts:{}};
+  badges:{},chain:0,bestChain:0,weakEver:0,bestDay:0,bestStreak:0,mixBest:0,seen:0,kammerInit:false,facts:{},box:{},karteiDays:0,karteiLast:''};
 function load(){try{var raw=localStorage.getItem(KEY);return raw?JSON.parse(raw):null;}catch(e){return null;}}
 function save(){scanBadges(false);try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){} syncPush();}
 var state=(function(){var s=load();var base=JSON.parse(JSON.stringify(DEFAULT));if(!s)return base;
@@ -532,6 +550,7 @@ var state=(function(){var s=load();var base=JSON.parse(JSON.stringify(DEFAULT));
   ['plus','minus','mal'].forEach(function(m){if(!base.crowns[m])base.crowns[m]=[0,0,0,0,0];});
   if(!base.badges||typeof base.badges!=='object'||base.badges.constructor===Array)base.badges={};
   if(!base.facts||typeof base.facts!=='object'||base.facts.constructor===Array)base.facts={};
+  if(!base.box||typeof base.box!=='object'||base.box.constructor===Array)base.box={};
   while(base.school.length<7)base.school.push(false);
   return base;})();
 
@@ -583,7 +602,20 @@ function mergeStates(a,b){
     });
   });
   m.facts=fc;
-  ['chain','bestChain','weakEver','bestDay','bestStreak','mixBest','seen'].forEach(function(k){
+  /* Leitner-Kartei: das weiter fortgeschrittene Fach gewinnt; bei Gleichstand
+     das frühere Datum — lieber einmal zu viel üben als eine Karte verpassen. */
+  var bx={};
+  [a.box,b.box].forEach(function(src){
+    if(!src||typeof src!=='object')return;
+    Object.keys(src).forEach(function(k){
+      var v=src[k];if(!v||!v.b)return;
+      var c=bx[k];
+      if(!c||v.b>c.b||(v.b===c.b&&(v.d||'')<(c.d||'')))bx[k]={b:v.b,d:v.d||''};
+    });
+  });
+  m.box=bx;
+  m.karteiLast=((a.karteiLast||'')>(b.karteiLast||''))?(a.karteiLast||''):(b.karteiLast||'');
+  ['chain','bestChain','weakEver','bestDay','bestStreak','mixBest','seen','karteiDays'].forEach(function(k){
     m[k]=Math.max(a[k]||0,b[k]||0);
   });
   m.kammerInit=!!(a.kammerInit||b.kammerInit);
@@ -690,6 +722,9 @@ var BADGES=[
  {id:'c_all', g:'Können', n:'Kronen-Sammlerin', c:C_KOENNEN, e:EM.crown, d:'Sammle alle 45 Kronen im ganzen Königreich.', ok:function(){return crownTotal()>=45;}},
  {id:'c_hard', g:'Können', n:'Die harten 15', c:C_KOENNEN, e:EM.bolt, d:'Lass alle 15 kniffligen Einmaleins-Aufgaben auf der Königs-Tafel golden leuchten.', ok:function(){return hardDone()>=HARD.length;}},
  {id:'c_tafel', g:'Können', n:'Tafel-Königin', c:C_KOENNEN, e:EM.star, d:'Bring die ganze Königs-Tafel zum Leuchten — alle 55 Aufgaben.', ok:function(){return allFacts().every(function(p){return factStatus(p[0],p[1])===3;});}},
+ {id:'k_start', g:'Können', n:'Kartei eröffnet', c:C_FLEISS, e:EM.bolt, d:'Schaff die vier Einmaleins-Lektionen und öffne damit die Kronjuwelen-Kartei.', ok:function(){return karteiOpen();}},
+ {id:'k_week', g:'Fleiß', n:'Kartei-Woche', c:C_FLEISS, e:EM.flame, d:'Übe an 7 verschiedenen Tagen mit der Kronjuwelen-Kartei.', ok:function(){return (state.karteiDays||0)>=7;}},
+ {id:'k_all', g:'Können', n:'Kartei-Meisterin', c:C_KOENNEN, e:EM.star, d:'Bring alle Karten der Kronjuwelen-Kartei ins letzte Fach.', ok:function(){return karteiCards().every(function(k){return state.box[k]&&state.box[k].b>=5;});}},
  /* --- Schatz --- */
  {id:'g100', g:'Schatz', n:'100 Juwelen', c:C_SCHATZ, e:EM.gem, d:'Sammle 100 Kronjuwelen.', ok:function(){return state.gems>=100;}},
  {id:'g250', g:'Schatz', n:'250 Juwelen', c:C_SCHATZ, e:EM.gem, d:'Sammle 250 Kronjuwelen.', ok:function(){return state.gems>=250;}},
@@ -808,6 +843,79 @@ function factStatus(a,b){
   if(f.g>=1)return 2;                 // wackelt noch
   return 1;                           // noch üben
 }
+/* ---------- Leitner-Kartei ----------
+   Verteiltes Abrufen statt Reihen aufsagen. Fünf Fächer, feste Abstände.
+   Bewusst NICHT zeitgesteuert freigeschaltet, sondern erst wenn die vier
+   Einmaleins-Lektionen sitzen — vorher gibt es nichts zu automatisieren. */
+var BOX_DAYS={1:1,2:1,3:3,4:7,5:14};
+var KARTEI_DUE=9,KARTEI_NEW=4,KARTEI_START_NEW=8,KARTEI_MAX=12;
+function dateAdd(n){var d=new Date();d.setDate(d.getDate()+n);return dstr(d);}
+function karteiOpen(){return !!(state.school[3]&&state.school[4]&&state.school[5]&&state.school[6]);}
+/* Alle Karten außer der 1er-Reihe — die ist keine Übung wert. */
+function karteiCards(){var o=[],a,b;for(a=2;a<=10;a++)for(b=a;b<=10;b++)o.push(a+'x'+b);return o;}
+/* Einführungs-Reihenfolge: erst die Anker, dann Quadrate, dann die kniffligen
+   nach Größe des Ergebnisses (kleine Produkte sind nachweislich leichter). */
+function cardOrder(){
+  var kern=[],quad=[],hard=[],prod=function(k){var p=k.split('x');return p[0]*p[1];};
+  karteiCards().forEach(function(k){
+    var p=k.split('x').map(Number);
+    if(p[0]===p[1])quad.push(k);
+    else if(KERN.indexOf(p[0])>=0||KERN.indexOf(p[1])>=0)kern.push(k);
+    else hard.push(k);
+  });
+  var bySize=function(x,y){return prod(x)-prod(y);};
+  kern.sort(bySize);quad.sort(bySize);hard.sort(bySize);
+  return kern.concat(quad,hard);
+}
+function dueCards(){
+  var t=todayStr(),o=[];
+  Object.keys(state.box).forEach(function(k){
+    var c=state.box[k];
+    if(c&&c.b&&(c.d||'')<=t)o.push(k);
+  });
+  o.sort(function(x,y){
+    var cx=state.box[x],cy=state.box[y];
+    return (cx.d||'').localeCompare(cy.d||'')||cx.b-cy.b;
+  });
+  return o;
+}
+function newCards(){return cardOrder().filter(function(k){return !state.box[k];});}
+/* Baut die Tagesration: überwiegend Bekanntes, ein paar neue Karten dazu. */
+function buildSession(frei){
+  var due=dueCards(),neu=newCards(),s=due.slice(0,KARTEI_DUE);
+  /* Solange nichts fällig ist (die ersten Runden), dürfen mehr neue Karten rein —
+     sonst wäre der Einstieg eine Vier-Karten-Runde. Danach greift die Begrenzung. */
+  var maxNeu=due.length?KARTEI_NEW:KARTEI_START_NEW;
+  for(var i=0;i<neu.length&&s.length<KARTEI_MAX&&i<maxNeu;i++)s.push(neu[i]);
+  if(frei&&!s.length){
+    /* Nichts fällig: die Karten nehmen, die als nächstes dran wären. */
+    s=Object.keys(state.box).sort(function(x,y){
+      return (state.box[x].d||'').localeCompare(state.box[y].d||'');
+    }).slice(0,10);
+  }
+  /* Mischen — gemischtes Üben hält länger als blockweises. */
+  for(var j=s.length-1;j>0;j--){var r=ri(0,j),tmp=s[j];s[j]=s[r];s[r]=tmp;}
+  return s;
+}
+function boxCounts(){
+  var c=[0,0,0,0,0];
+  Object.keys(state.box).forEach(function(k){var b=state.box[k].b;if(b>=1&&b<=5)c[b-1]++;});
+  return c;
+}
+function karteiPromote(a,b,richtig){
+  /* Eine noch unbekannte Karte liegt gedanklich schon in Fach 1 — wird sie auf
+     Anhieb gewusst, wandert sie nach Fach 2. Fach 1 bleibt für Neues und Fehler. */
+  var k=malKey(a,b),c=state.box[k]||{b:1,d:''};
+  if(richtig){
+    c.b=Math.min(5,(c.b||0)+1);
+    c.d=dateAdd(BOX_DAYS[c.b]);
+  }else{
+    c.b=1;c.d=todayStr();          // zurück in Fach 1, heute nochmal
+  }
+  state.box[k]=c;
+  return c.b;
+}
+
 /* Die 55 verschiedenen Aufgaben — Tauschaufgaben zählen als eine. */
 function allFacts(){var o=[],a,b;for(a=1;a<=10;a++)for(b=a;b<=10;b++)o.push([a,b]);return o;}
 /* Die 15, die nach Kernaufgaben und Quadraten übrig bleiben. */
@@ -901,9 +1009,20 @@ function renderHome(){
     var mb=btn.querySelector('.mbadge');
     if(mb)mb.innerHTML=state.master[btn.dataset.mode]?crownS.replace('CLS',''):'';
   });
-  var sdone=state.school.filter(Boolean).length;
-  $('#schoolSub').textContent=sdone===3?'Alle Lektionen geschafft!':(sdone>0?sdone+' von 3 Lektionen geschafft':'Erst begreifen, dann rechnen');
-  $('#btnSchool .mbadge').innerHTML=sdone===3?crownS.replace('CLS',''):'';
+  var sdone=state.school.filter(Boolean).length,sall=SCHOOL.length;
+  $('#schoolSub').textContent=sdone===sall?'Alle Lektionen geschafft!':(sdone>0?sdone+' von '+sall+' Lektionen geschafft':'Erst begreifen, dann rechnen');
+  $('#btnSchool .mbadge').innerHTML=sdone===sall?crownS.replace('CLS',''):'';
+  var kOpen=karteiOpen(),kFaellig=kOpen?dueCards().length:0,kDue=kOpen?buildSession(false).length:0;
+  $('#btnKartei').classList.toggle('zu',!kOpen);
+  var kNeu=kDue-kFaellig;
+  $('#karteiSub').textContent=!kOpen?'Erst die vier Einmaleins-Lektionen schaffen'
+    :(kFaellig&&kNeu)?'Heute: '+kFaellig+' zur Wiederholung, '+kNeu+' neu'
+    :kFaellig?'Heute fällig: '+kFaellig+' '+(kFaellig===1?'Karte':'Karten')
+    :kDue?kDue+' neue '+(kDue===1?'Karte wartet':'Karten warten')+' auf dich'
+    :'Heute ist alles erledigt — stark!';
+  $('#karteiBadge').innerHTML=kOpen
+    ?(kDue?'<span class="duebadge">'+kDue+'</span>':crownS.replace('CLS',''))
+    :'<svg class="crown-s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;opacity:.6"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7" stroke-linecap="round"/></svg>';
   var bc=badgeCount(),fresh=bc-(state.seen||0);
   $('#kammerSub').textContent=bc?bc+' von '+BADGES.length+' Abzeichen gesammelt':'Deine Abzeichen und Titel';
   $('#kammerNew').style.display=fresh>0?'':'none';
@@ -965,6 +1084,17 @@ function renderKammer(){
     ? 'Alle 15 kniffligen Aufgaben sitzen. Die Tafel gehört dir, Hanna!'
     : 'Die weiß umrandeten Felder sind die 15 kniffligen. Jede Aufgabe steht zweimal drin — oben rechts und unten links ist dieselbe.';
 
+  if(karteiOpen()){
+    var bcs=boxCounts(),gesamt=karteiCards().length,offen=gesamt-Object.keys(state.box).length;
+    $('#kBoxWrap').style.display='';
+    $('#kBoxes').innerHTML=bcs.map(function(n,i){
+      return '<div class="boxcell'+(i===4&&n?' full':'')+'"><b>'+n+'</b><span>Fach '+(i+1)+'</span></div>';
+    }).join('');
+    $('#kBoxNote').textContent=offen>0
+      ? offen+' '+(offen===1?'Karte wartet':'Karten warten')+' noch darauf, zum ersten Mal dranzukommen · geübt an '+(state.karteiDays||0)+' '+((state.karteiDays||0)===1?'Tag':'Tagen')
+      : 'Alle '+gesamt+' Karten sind schon mal drangekommen · geübt an '+(state.karteiDays||0)+' '+((state.karteiDays||0)===1?'Tag':'Tagen');
+  }else $('#kBoxWrap').style.display='none';
+
   var tot=crownTotal();
   $('#kCrownCount').innerHTML='<b>'+tot+'</b> von 45 Kronen erobert';
   $('#kCrowns').innerHTML=['plus','minus','mal'].map(function(m){
@@ -1018,6 +1148,20 @@ function renderLevels(mode){
 var R=null,lock=false,celebrations=[];
 function startRound(mode,lvl){
   var q=[],seen={},isTest=(lvl==='test'),lvls=null;
+  if(mode==='kartei'){
+    buildSession(lvl==='frei').forEach(function(ck){
+      var p=ck.split('x').map(Number);
+      /* Beide Schreibweisen abfragen — sonst erkennt sie das Ergebnis nur in einer Richtung. */
+      var ka=(Math.random()<0.5)?p[0]:p[1],kb=(ka===p[0])?p[1]:p[0];
+      q.push(mk('kartei',0,ka,'·',kb,p[0]*p[1]));
+    });
+    R={mode:'kartei',lvl:0,queue:q,idx:0,input:'',gems:0,score:0,test:false,up:0,down:0};
+    lock=false;
+    $('#playTitle').textContent='Kronjuwelen-Kartei';
+    $('#roundGems').textContent='0';
+    renderTask();show('screen-play');
+    return;
+  }
   if(isTest){
     lvls=[0,0,1,1,2,2,3,3,4,4,ri(0,4),ri(0,4)];
     for(var s=lvls.length-1;s>0;s--){var j=ri(0,s);var tmp=lvls[s];lvls[s]=lvls[j];lvls[j]=tmp;}
@@ -1111,8 +1255,16 @@ function check(){
     if(!t.revealed&&t.isBase)R.score++;
     if(t.sym==='·'&&!t.revealed){
       var k=malKey(t.a,t.b);if(state.weak[k]){state.weak[k]--;if(state.weak[k]<=0)delete state.weak[k];}
-      /* Nur zählen, was sie wirklich selbst wusste — ohne Tipp, ohne Fehlversuch. */
-      if(!t.hinted&&t.attempts===0)factRec(t.a,t.b).g++;
+      /* Nur die Erstvorlage zählt. Die Wiederholung nach einem Fehler ist keine
+         neue Leistung — sonst stünde die Aufgabe gleich wieder auf „sitzt". */
+      var selbst=(!t.hinted&&t.attempts===0);
+      if(t.isBase){
+        if(selbst)factRec(t.a,t.b).g++;
+        if(R.mode==='kartei'){
+          var nb=karteiPromote(t.a,t.b,selbst);
+          if(selbst)R.up++;else R.down++;
+        }
+      }
     }
     /* Blitzserie: nur zählen, wenn ohne Tipp und ohne Fehlversuch gelöst */
     if(!t.revealed&&!t.hinted&&t.attempts===0){
@@ -1144,7 +1296,10 @@ function revealSolution(t){
   if(t.sym==='·'){
     var k=malKey(t.a,t.b);state.weak[k]=Math.min(8,(state.weak[k]||0)+2);
     if(weakCount()>(state.weakEver||0))state.weakEver=weakCount();
-    var fr=factRec(t.a,t.b);fr.f++;if(fr.g>0)fr.g--;   // wackelt wieder
+    if(t.isBase){
+      var fr=factRec(t.a,t.b);fr.f++;if(fr.g>0)fr.g--;   // wackelt wieder
+      if(R.mode==='kartei'){karteiPromote(t.a,t.b,false);R.down++;}
+    }
     save();
   }
   if(!R.test&&t.isBase&&R.queue.length<14){
@@ -1225,6 +1380,24 @@ function crownsFor(s){return s>=9?3:(s>=7?2:(s>=5?1:0));}
 var crownM='<svg class="crown-m CLS" viewBox="0 0 24 19"><path d="M2 15 L3.2 5.5 L8 9.5 L12 3 L16 9.5 L20.8 5.5 L22 15 Z" fill="#FFC94D"/><rect x="2.6" y="15.8" width="18.8" height="2.6" rx="1.2" fill="#D99A26"/></svg>';
 function endRound(){
   var isMix=R.mode==='mix';
+  $('#btnAgain').style.display=(R.mode==='kartei')?'none':'';
+  if(R.mode==='kartei'){
+    var heute=todayStr();
+    if(state.karteiLast!==heute){state.karteiDays=(state.karteiDays||0)+1;state.karteiLast=heute;}
+    save();
+    var bc=boxCounts(),geuebt=R.queue.filter(function(x){return x.isBase;}).length;
+    $('#sumCrowns').innerHTML='';
+    $('#sumBig').textContent=R.up+' von '+geuebt+' Karten sofort gewusst!';
+    $('#sumText').innerHTML=R.up+' '+(R.up===1?'Karte wandert':'Karten wandern')+' ein Fach weiter'
+      +(R.down?' · '+R.down+' '+(R.down===1?'kommt':'kommen')+' bald nochmal':'')
+      +' · +'+R.gems+' Kronjuwelen<br>Deine Fächer: '+bc.join(' · ');
+    $('#btnNextLvl').style.display='none';
+    $('#btnSchoolHint').style.display=R.queue.some(function(x){return x.revealed;})?'':'none';
+    show('screen-summary');
+    if(geuebt&&R.up===geuebt){confetti();sFanfare();}
+    runCelebrations();
+    return;
+  }
   if(R.test){
     var testPassed=R.score>=10;
     if(testPassed&&!state.master[R.mode]){
@@ -1758,6 +1931,18 @@ $('#lsNext').addEventListener('click',function(){
 $('#btnLessonBack').addEventListener('click',renderSchool);
 $('#btnSchool').addEventListener('click',renderSchool);
 $('#btnKammer').addEventListener('click',renderKammer);
+$('#btnKartei').addEventListener('click',function(){
+  if(!karteiOpen()){
+    showDialog({title:'Noch verschlossen',text:'Die Kartei geht auf, wenn du die vier Einmaleins-Lektionen geschafft hast: Zauber-Dreh, Königs-Reihen, Zerschneiden und Neuner-Trick. Erst die Tricks — dann das Üben.',okLabel:'Zur Zauberschule',onOk:renderSchool});
+    return;
+  }
+  ac();
+  if(!buildSession(false).length){
+    showDialog({title:'Heute nichts fällig!',text:'Alle Karten sind erledigt — deine Kartei ist auf dem neuesten Stand. Willst du trotzdem ein paar üben?',okLabel:'Ja, üben',onOk:function(){startRound('kartei','frei');}});
+    return;
+  }
+  startRound('kartei',0);
+});
 var hasSpeech=('speechSynthesis' in window);
 if(!hasSpeech)$('#btnSpeak').style.display='none';
 $('#btnSpeak').addEventListener('click',function(){
