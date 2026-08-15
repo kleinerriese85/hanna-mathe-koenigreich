@@ -183,8 +183,55 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
 .danger{color:var(--bad); border-color:rgba(255,139,150,.4);}
 .psec{margin-bottom:14px;}
 
+/* ---------- Schatzkammer ---------- */
+.mode-card.kammer{grid-column:1/-1; border-color:rgba(159,231,255,.5); background:rgba(159,231,255,.06);}
+.newdot{position:absolute; top:11px; right:11px; background:var(--bad); color:#2A0E12; font-size:11px; font-weight:900; border-radius:99px; padding:3px 9px; letter-spacing:.3px;}
+.ksec{margin-bottom:20px;}
+.ktitle{font-size:16px; font-weight:900; margin:0 0 3px;}
+.ksub{font-size:13px; color:var(--ink-dim); margin:0 0 11px; line-height:1.5;}
+
+.ranks{display:flex; gap:6px;}
+.rankslot{flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; padding:10px 3px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.04); opacity:.4;}
+.rankslot.has{opacity:1; border-color:rgba(255,201,77,.5); background:rgba(255,201,77,.08);}
+.rankslot.now{border-color:var(--gold); background:rgba(255,201,77,.16);}
+.rankslot svg{width:26px; height:21px;}
+.rankslot .rn{font-size:10.5px; font-weight:800; text-align:center; line-height:1.25; text-wrap:balance;}
+.rankslot .rq{font-size:10px; color:var(--ink-dim); font-variant-numeric:tabular-nums;}
+
+.crownstars{display:flex; align-items:center; justify-content:center; gap:7px; margin-top:12px; padding:11px; border-radius:14px; border:1px dashed rgba(255,201,77,.45); background:rgba(255,201,77,.06); flex-wrap:wrap;}
+.crownstars .cs{width:19px; height:19px; opacity:.22;}
+.crownstars .cs.on{opacity:1;}
+.crownstars .cst{font-size:12.5px; color:var(--ink-dim); width:100%; text-align:center; line-height:1.45;}
+
+.badges{display:grid; grid-template-columns:repeat(3,1fr); gap:9px;}
+.badge{display:flex; flex-direction:column; align-items:center; gap:6px; padding:11px 4px 10px; border-radius:16px; border:1px solid var(--line); background:rgba(255,255,255,.04); text-align:center;}
+.badge .bmed{width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid rgba(255,255,255,.14); background:rgba(255,255,255,.05);}
+.badge .bmed svg{width:23px; height:23px; opacity:.3;}
+.badge .bn{font-size:11px; font-weight:800; line-height:1.28; color:var(--ink-dim); text-wrap:balance;}
+.badge.has{border-color:var(--bc); background:color-mix(in srgb, var(--bc) 12%, transparent);}
+.badge.has .bmed{border-color:var(--bc); background:color-mix(in srgb, var(--bc) 22%, transparent); box-shadow:0 0 14px color-mix(in srgb, var(--bc) 35%, transparent);}
+.badge.has .bmed svg{opacity:1;}
+.badge.has .bn{color:var(--ink);}
+.badge:active{transform:scale(.95);}
+@supports not (color:color-mix(in srgb,red,blue)){
+  .badge.has{background:rgba(255,201,77,.1);}
+  .badge.has .bmed{background:rgba(255,201,77,.2);}
+}
+@keyframes badgepop{0%{transform:scale(.3); opacity:0}70%{transform:scale(1.16)}100%{transform:scale(1); opacity:1}}
+.veilcard .bigbadge{width:76px; height:76px; margin:2px auto 4px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid var(--gold); background:rgba(255,201,77,.2); animation:badgepop .5s ease;}
+.veilcard .bigbadge svg{width:38px; height:38px;}
+
+.kcount{font-size:13px; color:var(--ink-dim); font-variant-numeric:tabular-nums; margin:0 0 11px;}
+.kcount b{color:var(--gold); font-size:15px;}
+.crowngrid{display:flex; flex-direction:column; gap:9px;}
+.cgrow{display:flex; align-items:center; gap:9px;}
+.cgrow .cgl{font-size:12px; font-weight:800; width:52px; flex:none;}
+.cgrow .cgc{display:flex; gap:2.5px; flex-wrap:wrap;}
+.cgrow .crown-s{width:14px; height:11px;}
+.cgsep{width:5px;}
+
 @media (prefers-reduced-motion: reduce){
-  .star, .task.shake, .praise.show, .crown-m.won.anim, .confetti, .pop{animation:none !important;}
+  .star, .task.shake, .praise.show, .crown-m.won.anim, .confetti, .pop, .veilcard .bigbadge{animation:none !important;}
   .praise.show{opacity:1;}
 }
 </style>
@@ -232,6 +279,10 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
       <button class="mode-card school" id="btnSchool">
         <svg class="gemicon" viewBox="0 0 24 24" fill="none" stroke="#FFC94D" stroke-width="2" stroke-linejoin="round"><path d="M12 5.5C10 4 7.5 3.5 4 3.5v14c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2v-14c-3.5 0-6 .5-8 2z"/><path d="M12 5.5v14" stroke-linecap="round"/></svg>
         <span class="mname">Zahlen-Zauberschule</span><span class="msub" id="schoolSub">Erst begreifen, dann rechnen</span><span class="mbadge"></span>
+      </button>
+      <button class="mode-card kammer" id="btnKammer">
+        <svg class="gemicon" viewBox="0 0 24 24" fill="none" stroke="#9FE7FF" stroke-width="2" stroke-linejoin="round"><path d="M3 8.5h18v11H3z"/><path d="M3 8.5 5.5 4.5h13L21 8.5"/><path d="M12 8.5v11M9.5 12.5h5" stroke-linecap="round"/></svg>
+        <span class="mname">Schatzkammer</span><span class="msub" id="kammerSub">Deine Abzeichen und Titel</span><span class="newdot" id="kammerNew" style="display:none">Neu!</span>
       </button>
     </div>
 
@@ -316,6 +367,35 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
     <div style="text-align:center; margin-top:auto; padding-top:10px"><button class="btn primary" id="lsNext" style="display:none">Weiter ›</button></div>
   </section>
 
+  <!-- ================= SCHATZKAMMER ================= -->
+  <section class="screen" id="screen-kammer">
+    <div class="topbar">
+      <button class="backbtn" data-back="home">‹ Burg</button>
+      <span class="ttl">Deine Schatzkammer</span>
+      <span class="spacer"></span>
+    </div>
+
+    <div class="ksec">
+      <p class="ktitle">Die Ahnengalerie</p>
+      <p class="ksub" id="kRankSub"></p>
+      <div class="ranks" id="kRanks"></div>
+      <div class="crownstars" id="kStars"></div>
+    </div>
+
+    <div class="ksec">
+      <p class="ktitle">Deine Abzeichen</p>
+      <p class="kcount" id="kCount"></p>
+      <div class="badges" id="kBadges"></div>
+      <p class="ksub" style="margin:11px 0 0">Tipp: Tipp ein Abzeichen an, dann siehst du, wie du es bekommst.</p>
+    </div>
+
+    <div class="ksec">
+      <p class="ktitle">Die Kronen-Tafel</p>
+      <p class="kcount" id="kCrownCount"></p>
+      <div class="crowngrid" id="kCrowns"></div>
+    </div>
+  </section>
+
   <!-- ================= PARENTS ================= -->
   <section class="screen" id="screen-parents">
     <div class="topbar">
@@ -325,6 +405,9 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
     </div>
     <div class="card psec">
       <p class="pnote"><b>So ist das Spiel aufgebaut:</b> Jeder Weg hat 5 Level, die aufeinander aufbauen. Ein neues Level öffnet sich ab 2 Kronen (7 von 10 richtig). Hat sie in allen 5 Leveln eines Wegs 2 Kronen, wartet die <b>Prüfung</b>: 12 Aufgaben quer durch den Weg, ohne Tipps, bestanden ab 10 richtigen — so wird das Gelernte nochmal bestätigt. Empfohlener Einstieg: <b>Minus Level 1–2</b> (der Zehner-Sprung, z.&nbsp;B. 57&nbsp;−&nbsp;20) und <b>Mal Level 1</b>. Tagesziel sind 20 Juwelen — das sind etwa 2 Runden, also 10–15 Minuten.</p>
+    </div>
+    <div class="card psec">
+      <p class="pnote"><b>Die Schatzkammer</b> ist die Sammel-Ansicht: 5 Ränge, 24 Abzeichen und alle 45 Kronen an einem Ort — erreichte in Farbe, offene als Schloss mit Bedingung. Das ist bewusst so gebaut, dass die Lücken sichtbar sind: Ein leerer Platz „Saphir-Meisterin" zieht sie zum Minus-Weg, ein leeres Zauberschul-Regal in die Lektionen. Wenn du sie lenken willst, zeig ihr dort das nächste erreichbare Abzeichen. Ab <b>Mathe-Königin</b> (550 Juwelen) geht es weiter mit Sternen auf der Krone — einer je 250 Juwelen, damit nach dem Titel kein Leerlauf entsteht.</p>
     </div>
     <div class="card psec">
       <p class="pnote"><b>Rechenwege, die das Spiel zeigt</b> (so hilfst du beim Üben mit denselben Worten): Bei 57&nbsp;−&nbsp;20 ändern sich nur die Zehner: 5&nbsp;Zehner&nbsp;−&nbsp;2&nbsp;Zehner&nbsp;=&nbsp;3&nbsp;Zehner, die 7 Einer bleiben → 37. Bei 47&nbsp;+&nbsp;6 geht es über die Zehnerbrücke: erst +3 bis 50, dann +3. Beim Einmaleins: 7&nbsp;·&nbsp;4 heißt 7-mal die 4.</p>
@@ -358,7 +441,8 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
 <!-- Celebration overlay -->
 <div class="veil" id="veil">
   <div class="veilcard">
-    <svg class="crown-lg" viewBox="0 0 24 19"><path d="M2 15 L3.2 5.5 L8 9.5 L12 3 L16 9.5 L20.8 5.5 L22 15 Z" fill="#FFC94D"/><rect x="2.6" y="15.8" width="18.8" height="2.6" rx="1.2" fill="#D99A26"/></svg>
+    <svg class="crown-lg" id="veilCrown" viewBox="0 0 24 19"><path d="M2 15 L3.2 5.5 L8 9.5 L12 3 L16 9.5 L20.8 5.5 L22 15 Z" fill="#FFC94D"/><rect x="2.6" y="15.8" width="18.8" height="2.6" rx="1.2" fill="#D99A26"/></svg>
+    <div class="bigbadge" id="veilBadge" style="display:none"></div>
     <h2 id="veilTitle"></h2>
     <p id="veilText"></p>
     <button class="btn primary" id="veilBtn">Weiter</button>
@@ -392,16 +476,22 @@ function yesterdayStr(){var d=new Date();d.setDate(d.getDate()-1);return dstr(d)
 
 /* ---------- State ---------- */
 var KEY='hannah-mathe-v1';
-var DEFAULT={gems:0,crowns:{plus:[0,0,0,0,0],minus:[0,0,0,0,0],mal:[0,0,0,0,0]},master:{plus:false,minus:false,mal:false},school:[false,false,false],weak:{},stats:{},daily:{date:'',count:0},streak:0,lastCrownDate:'',sound:true};
+var DEFAULT={gems:0,crowns:{plus:[0,0,0,0,0],minus:[0,0,0,0,0],mal:[0,0,0,0,0]},master:{plus:false,minus:false,mal:false},school:[false,false,false],weak:{},stats:{},daily:{date:'',count:0},streak:0,lastCrownDate:'',sound:true,
+  badges:{},chain:0,bestChain:0,weakEver:0,bestDay:0,bestStreak:0,mixBest:0,seen:0,kammerInit:false};
 function load(){try{var raw=localStorage.getItem(KEY);return raw?JSON.parse(raw):null;}catch(e){return null;}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){} syncPush();}
+function save(){scanBadges(false);try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){} syncPush();}
 var state=(function(){var s=load();var base=JSON.parse(JSON.stringify(DEFAULT));if(!s)return base;
   for(var k in base){if(s[k]!==undefined)base[k]=s[k];}
   ['plus','minus','mal'].forEach(function(m){if(!base.crowns[m])base.crowns[m]=[0,0,0,0,0];});
+  if(!base.badges||typeof base.badges!=='object'||base.badges.constructor===Array)base.badges={};
   return base;})();
 
 var RANKS=[{n:'Burgfräulein',min:0},{n:'Hofdame',min:60},{n:'Ritterin',min:150},{n:'Prinzessin',min:300},{n:'Mathe-Königin',min:550}];
 function rankIdx(g){var i=0;for(var j=0;j<RANKS.length;j++){if(g>=RANKS[j].min)i=j;}return i;}
+/* Nach der Krone geht es weiter: ein Stern je 250 Juwelen, erster bei 800. */
+var STAR_STEP=250,STAR_FIRST=800;
+function starCount(g){return g>=STAR_FIRST?Math.floor((g-RANKS[RANKS.length-1].min)/STAR_STEP):0;}
+function nextStarAt(g){return RANKS[RANKS.length-1].min+(starCount(g)+1)*STAR_STEP;}
 
 /* ---------- Cloud-Sync (optional, via spielstand.php auf demselben Server) ---------- */
 var SYNC={url:'spielstand.php',on:false,timer:null};
@@ -427,6 +517,17 @@ function mergeStates(a,b){
   Object.keys(a.stats||{}).forEach(function(k){stt[k]=a.stats[k];});
   Object.keys(b.stats||{}).forEach(function(k){if(!stt[k]||(b.stats[k].tries||0)>(stt[k].tries||0))stt[k]=b.stats[k];});
   m.stats=stt;
+  /* Abzeichen: Vereinigung — was auf einem Gerät verdient wurde, bleibt auf allen. */
+  var bd={};
+  [a.badges,b.badges].forEach(function(src){
+    if(!src||typeof src!=='object')return;
+    Object.keys(src).forEach(function(k){if(src[k])bd[k]=true;});
+  });
+  m.badges=bd;
+  ['chain','bestChain','weakEver','bestDay','bestStreak','mixBest','seen'].forEach(function(k){
+    m[k]=Math.max(a[k]||0,b[k]||0);
+  });
+  m.kammerInit=!!(a.kammerInit||b.kammerInit);
   m.sound=a.sound!==undefined?a.sound:true;
   return m;
 }
@@ -445,7 +546,10 @@ function syncPull(){
         state=mergeStates(state,remote);
         state.sound=localSound;
         save();
-        if($('#screen-home').classList.contains('active'))renderHome();
+        if($('#screen-home').classList.contains('active')){
+          renderHome();
+          if(!$('#veil').classList.contains('show'))runCelebrations();
+        }
       }else{
         syncPush();
       }
@@ -480,6 +584,80 @@ var LEVEL_META={
 var MAL_TABLES=[[1,2,10],[5,5,5,2,10],[3,3,4,4,5],[6,6,8,8,4],[7,7,9,9,8,6]];
 var TEST_META={plus:{t:'Rubin-Prüfung',weg:'Rubin-Wegs'},minus:{t:'Saphir-Prüfung',weg:'Saphir-Wegs'},mal:{t:'Smaragd-Prüfung',weg:'Smaragd-Wegs'}};
 var PRAISE=['Königlich!','Funkelnd richtig!','Kronjuwel für dich!','Zack — richtig!','Die Krone rückt näher!','Super, Hanna!'];
+
+/* ---------- Abzeichen ---------- */
+var EM={
+ gem:'<svg viewBox="0 0 24 24"><polygon points="12,2 20,9 12,22 4,9" fill="currentColor"/></svg>',
+ crown:'<svg viewBox="0 0 24 19"><path d="M2 15 L3.2 5.5 L8 9.5 L12 3 L16 9.5 L20.8 5.5 L22 15 Z" fill="currentColor"/><rect x="2.6" y="15.8" width="18.8" height="2.6" rx="1.2" fill="currentColor" opacity=".65"/></svg>',
+ book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 5.5C10 4 7.5 3.5 4 3.5v14c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2v-14c-3.5 0-6 .5-8 2z"/><path d="M12 5.5v14" stroke-linecap="round"/></svg>',
+ flame:'<svg viewBox="0 0 24 24"><path d="M12 2c1 3.5-1.5 4.8-2.6 6.6C8.2 10.5 8 12 8 12S6.6 11 6.3 9.4C4.9 11 4 13 4 15a8 8 0 0 0 16 0c0-4.2-3-6.6-4.7-8.2C13.6 5.2 12.6 3.7 12 2z" fill="currentColor"/></svg>',
+ star:'<svg viewBox="0 0 24 24"><polygon points="12,2 14.9,8.9 22.4,9.5 16.7,14.4 18.4,21.7 12,17.8 5.6,21.7 7.3,14.4 1.6,9.5 9.1,8.9" fill="currentColor"/></svg>',
+ bolt:'<svg viewBox="0 0 24 24"><path d="M13.5 2 5 13.2h5.2L9.6 22 19 10.4h-5.4z" fill="currentColor"/></svg>',
+ lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7" stroke-linecap="round"/></svg>'
+};
+var C_RUBIN='#FF7B8A',C_SAPHIR='#7FB0FF',C_SMARAGD='#5CD695',C_GOLD='#FFC94D',C_FLEISS='#FF9F6E',C_KOENNEN='#9FE7FF',C_SCHATZ='#C9A7FF';
+function allCrowns(m){return state.crowns[m].every(function(c){return c>=3;});}
+function crownTotal(){var n=0;['plus','minus','mal'].forEach(function(m){state.crowns[m].forEach(function(c){n+=c;});});return n;}
+function weakCount(){return Object.keys(state.weak||{}).length;}
+
+var BADGES=[
+ /* --- Die drei Wege --- */
+ {id:'m_plus', g:'Wege', n:'Rubin-Meisterin', c:C_RUBIN, e:EM.gem, d:'Bestehe die Rubin-Prüfung am Ende vom Plus-Weg.', ok:function(){return !!state.master.plus;}},
+ {id:'m_minus', g:'Wege', n:'Saphir-Meisterin', c:C_SAPHIR, e:EM.gem, d:'Bestehe die Saphir-Prüfung am Ende vom Minus-Weg.', ok:function(){return !!state.master.minus;}},
+ {id:'m_mal', g:'Wege', n:'Smaragd-Meisterin', c:C_SMARAGD, e:EM.gem, d:'Bestehe die Smaragd-Prüfung am Ende vom Mal-Weg.', ok:function(){return !!state.master.mal;}},
+ {id:'k_plus', g:'Wege', n:'Rubin-Krone', c:C_RUBIN, e:EM.crown, d:'Hol in allen 5 Plus-Leveln alle 3 Kronen.', ok:function(){return allCrowns('plus');}},
+ {id:'k_minus', g:'Wege', n:'Saphir-Krone', c:C_SAPHIR, e:EM.crown, d:'Hol in allen 5 Minus-Leveln alle 3 Kronen.', ok:function(){return allCrowns('minus');}},
+ {id:'k_mal', g:'Wege', n:'Smaragd-Krone', c:C_SMARAGD, e:EM.crown, d:'Hol in allen 5 Mal-Leveln alle 3 Kronen.', ok:function(){return allCrowns('mal');}},
+ /* --- Zauberschule --- */
+ {id:'s0', g:'Zauberschule', n:'Bündel-Zauber', c:C_GOLD, e:EM.book, d:'Schaff die 1. Lektion: Zehner und Einer.', ok:function(){return !!state.school[0];}},
+ {id:'s1', g:'Zauberschule', n:'Zehner-Zauber', c:C_GOLD, e:EM.book, d:'Schaff die 2. Lektion: 57 − 20 ganz leicht.', ok:function(){return !!state.school[1];}},
+ {id:'s2', g:'Zauberschule', n:'Brücken-Zauber', c:C_GOLD, e:EM.book, d:'Schaff die 3. Lektion: die Zehnerbrücke.', ok:function(){return !!state.school[2];}},
+ {id:'s_all', g:'Zauberschule', n:'Zauberschul-Diplom', c:C_GOLD, e:EM.star, d:'Schaff alle 3 Lektionen der Zauberschule.', ok:function(){return state.school.every(Boolean);}},
+ /* --- Fleiß --- */
+ {id:'d1', g:'Fleiß', n:'Erste Tageskrone', c:C_FLEISS, e:EM.flame, d:'Sammle an einem Tag 20 Juwelen.', ok:function(){return (state.bestStreak||0)>=1;}},
+ {id:'d3', g:'Fleiß', n:'3 Tage am Stück', c:C_FLEISS, e:EM.flame, d:'Hol dir 3 Tage hintereinander die Tageskrone.', ok:function(){return (state.bestStreak||0)>=3;}},
+ {id:'d7', g:'Fleiß', n:'7 Tage am Stück', c:C_FLEISS, e:EM.flame, d:'Hol dir 7 Tage hintereinander die Tageskrone.', ok:function(){return (state.bestStreak||0)>=7;}},
+ {id:'d14', g:'Fleiß', n:'14 Tage am Stück', c:C_FLEISS, e:EM.flame, d:'Hol dir 14 Tage hintereinander die Tageskrone.', ok:function(){return (state.bestStreak||0)>=14;}},
+ {id:'dd', g:'Fleiß', n:'Doppel-Tag', c:C_FLEISS, e:EM.star, d:'Sammle an einem einzigen Tag 40 Juwelen.', ok:function(){return (state.bestDay||0)>=40;}},
+ /* --- Können --- */
+ {id:'c_crown', g:'Können', n:'Kronen-Runde', c:C_KOENNEN, e:EM.crown, d:'Hol in einer einzigen Runde alle 3 Kronen.', ok:function(){return ['plus','minus','mal'].some(function(m){return state.crowns[m].some(function(c){return c>=3;});});}},
+ {id:'c_chain', g:'Können', n:'Blitzserie', c:C_KOENNEN, e:EM.bolt, d:'Löse 15 Aufgaben hintereinander richtig — ohne Tipp und ohne Fehler.', ok:function(){return (state.bestChain||0)>=15;}},
+ {id:'c_mix', g:'Können', n:'Mix-Meisterin', c:C_KOENNEN, e:EM.gem, d:'Schaff im Königs-Mix 10 von 10.', ok:function(){return (state.mixBest||0)>=10;}},
+ {id:'c_weak', g:'Können', n:'Einmaleins-Jägerin', c:C_KOENNEN, e:EM.bolt, d:'Räum den Übungsschatz wieder komplett leer.', ok:function(){return (state.weakEver||0)>=3&&weakCount()===0;}},
+ {id:'c_all', g:'Können', n:'Kronen-Sammlerin', c:C_KOENNEN, e:EM.crown, d:'Sammle alle 45 Kronen im ganzen Königreich.', ok:function(){return crownTotal()>=45;}},
+ /* --- Schatz --- */
+ {id:'g100', g:'Schatz', n:'100 Juwelen', c:C_SCHATZ, e:EM.gem, d:'Sammle 100 Kronjuwelen.', ok:function(){return state.gems>=100;}},
+ {id:'g250', g:'Schatz', n:'250 Juwelen', c:C_SCHATZ, e:EM.gem, d:'Sammle 250 Kronjuwelen.', ok:function(){return state.gems>=250;}},
+ {id:'g500', g:'Schatz', n:'500 Juwelen', c:C_SCHATZ, e:EM.gem, d:'Sammle 500 Kronjuwelen.', ok:function(){return state.gems>=500;}},
+ {id:'g1000', g:'Schatz', n:'1000 Juwelen', c:C_SCHATZ, e:EM.star, d:'Sammle 1000 Kronjuwelen.', ok:function(){return state.gems>=1000;}}
+];
+function badgeCount(){var n=0;BADGES.forEach(function(b){if(state.badges[b.id])n++;});return n;}
+function scanBadges(silent){
+  if(!BADGES||!state||!state.badges)return 0;
+  var n=0;
+  BADGES.forEach(function(b){
+    if(state.badges[b.id])return;
+    var ok=false;try{ok=b.ok();}catch(e){}
+    if(!ok)return;
+    state.badges[b.id]=true;n++;
+    if(!silent)celebrations.push({t:'Neues Abzeichen!',x:'„'+b.n+'" liegt jetzt in deiner Schatzkammer, Hanna.',badge:b});
+  });
+  return n;
+}
+/* Beim ersten Start nach dem Update: alles rückwirkend gutschreiben, nichts geht verloren. */
+function initKammer(){
+  if(state.kammerInit)return;
+  state.bestStreak=Math.max(state.bestStreak||0,state.streak||0);
+  if(!state.bestStreak&&state.lastCrownDate)state.bestStreak=1;
+  state.bestDay=Math.max(state.bestDay||0,(state.daily&&state.daily.count)||0);
+  state.weakEver=Math.max(state.weakEver||0,weakCount());
+  scanBadges(true);
+  state.kammerInit=true;
+  state.seen=0;
+  var n=badgeCount();
+  if(n)celebrations.push({t:'Deine Schatzkammer ist offen!',x:'Du hast schon '+n+' '+(n===1?'Abzeichen':'Abzeichen')+' verdient — ab jetzt liegen sie alle an einem Ort. Schau rein!'});
+  save();
+}
 
 function malKey(a,b){return Math.min(a,b)+'x'+Math.max(a,b);}
 function pickWeak(tables){
@@ -551,16 +729,18 @@ function show(id){
 
 /* ---------- Home ---------- */
 function renderHome(){
-  var idx=rankIdx(state.gems);
-  $('#rankName').textContent=RANKS[idx].n;
+  var idx=rankIdx(state.gems),st=starCount(state.gems);
+  $('#rankName').textContent=RANKS[idx].n+(st?' '+new Array(st+1).join('★'):'');
   $('#gemTotal').textContent=state.gems;
   if(idx<RANKS.length-1){
     var lo=RANKS[idx].min,hi=RANKS[idx+1].min;
     $('#rankBar').style.width=Math.min(100,Math.round((state.gems-lo)/(hi-lo)*100))+'%';
     $('#rankNext').textContent='Noch '+(hi-state.gems)+' Juwelen bis '+RANKS[idx+1].n;
   }else{
-    $('#rankBar').style.width='100%';
-    $('#rankNext').textContent='Du trägst die Krone! Bleib in Übung, Königin Hanna.';
+    /* Nach der Krone: der nächste Stern ist das neue Ziel */
+    var sLo=RANKS[idx].min+st*STAR_STEP,sHi=nextStarAt(state.gems);
+    $('#rankBar').style.width=Math.min(100,Math.round((state.gems-sLo)/(sHi-sLo)*100))+'%';
+    $('#rankNext').textContent='Noch '+(sHi-state.gems)+' Juwelen bis zum '+(st+1)+'. Stern auf deiner Krone';
   }
   $('#dayCount').textContent=(state.daily.date===todayStr())?state.daily.count:0;
   $('#streakCount').textContent=state.streak;
@@ -571,8 +751,63 @@ function renderHome(){
   var sdone=state.school.filter(Boolean).length;
   $('#schoolSub').textContent=sdone===3?'Alle Lektionen geschafft!':(sdone>0?sdone+' von 3 Lektionen geschafft':'Erst begreifen, dann rechnen');
   $('#btnSchool .mbadge').innerHTML=sdone===3?crownS.replace('CLS',''):'';
+  var bc=badgeCount(),fresh=bc-(state.seen||0);
+  $('#kammerSub').textContent=bc?bc+' von '+BADGES.length+' Abzeichen gesammelt':'Deine Abzeichen und Titel';
+  $('#kammerNew').style.display=fresh>0?'':'none';
+  $('#kammerNew').textContent=fresh>1?fresh+' neu!':'Neu!';
   updateSoundIcon();
   show('screen-home');
+}
+
+/* ---------- Schatzkammer ---------- */
+function renderKammer(){
+  var idx=rankIdx(state.gems),st=starCount(state.gems);
+  $('#kRankSub').textContent=idx<RANKS.length-1
+    ? 'Du bist '+RANKS[idx].n+'. Noch '+(RANKS[idx+1].min-state.gems)+' Juwelen bis '+RANKS[idx+1].n+'.'
+    : 'Du hast es geschafft: Du bist Mathe-Königin!';
+  $('#kRanks').innerHTML=RANKS.map(function(r,i){
+    var has=state.gems>=r.min;
+    return '<div class="rankslot'+(has?' has':'')+(i===idx?' now':'')+'">'
+      +(has?'<svg viewBox="0 0 24 19"><path d="M2 15 L3.2 5.5 L8 9.5 L12 3 L16 9.5 L20.8 5.5 L22 15 Z" fill="#FFC94D"/><rect x="2.6" y="15.8" width="18.8" height="2.6" rx="1.2" fill="#D99A26"/></svg>'
+            :'<svg viewBox="0 0 24 19"><path d="M2 15 L3.2 5.5 L8 9.5 L12 3 L16 9.5 L20.8 5.5 L22 15 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" opacity=".7"/></svg>')
+      +'<span class="rn">'+r.n+'</span>'
+      +'<span class="rq">'+(has?'✓':r.min)+'</span></div>';
+  }).join('');
+  var shown=Math.max(3,st+1),sh='';
+  for(var i=0;i<shown;i++)sh+='<span class="cs'+(i<st?' on':'')+'" style="color:var(--gold)">'+EM.star+'</span>';
+  $('#kStars').innerHTML=sh+'<span class="cst">'+(idx<RANKS.length-1
+    ? 'Wenn du Mathe-Königin bist, sammelst du hier Sterne für deine Krone — einen für je '+STAR_STEP+' Juwelen.'
+    : (st?'Du trägst '+st+' '+(st===1?'Stern':'Sterne')+' auf der Krone. Noch '+(nextStarAt(state.gems)-state.gems)+' Juwelen bis zum nächsten.'
+        :'Noch '+(STAR_FIRST-state.gems)+' Juwelen bis zum ersten Stern auf deiner Krone.'))+'</span>';
+
+  var bc=badgeCount();
+  $('#kCount').innerHTML='<b>'+bc+'</b> von '+BADGES.length+' Abzeichen gesammelt';
+  $('#kBadges').innerHTML=BADGES.map(function(b,i){
+    var has=!!state.badges[b.id];
+    return '<button class="badge'+(has?' has':'')+'" data-b="'+i+'" style="--bc:'+b.c+'">'
+      +'<span class="bmed" style="color:'+(has?b.c:'var(--ink-dim)')+'">'+(has?b.e:EM.lock)+'</span>'
+      +'<span class="bn">'+b.n+'</span></button>';
+  }).join('');
+  document.querySelectorAll('#kBadges .badge').forEach(function(el){
+    el.addEventListener('click',function(){
+      var b=BADGES[parseInt(el.dataset.b,10)];
+      showDialog({title:b.n,text:(state.badges[b.id]?'Geschafft! ':'Das musst du dafür tun: ')+b.d,okLabel:'Ok',cancel:false});
+    });
+  });
+
+  var tot=crownTotal();
+  $('#kCrownCount').innerHTML='<b>'+tot+'</b> von 45 Kronen erobert';
+  $('#kCrowns').innerHTML=['plus','minus','mal'].map(function(m){
+    var cells='';
+    state.crowns[m].forEach(function(c,li){
+      if(li)cells+='<span class="cgsep"></span>';
+      for(var j=0;j<3;j++)cells+=crownS.replace('CLS',j<c?'':'off');
+    });
+    return '<div class="cgrow"><span class="cgl">'+MODES[m].name+'</span><span class="cgc">'+cells+'</span></div>';
+  }).join('');
+
+  if(bc>(state.seen||0)){state.seen=bc;save();}
+  show('screen-kammer');
 }
 
 /* ---------- Levels ---------- */
@@ -669,16 +904,20 @@ function statFor(t){
   return state.stats[k];
 }
 function gainGem(){
-  var before=rankIdx(state.gems);
+  var before=rankIdx(state.gems),starBefore=starCount(state.gems);
   state.gems++;
   var after=rankIdx(state.gems);
   if(after>before)celebrations.push({t:'Du bist jetzt '+RANKS[after].n+'!',x:'Deine Juwelen funkeln im ganzen Königreich, Hanna!'});
+  var starAfter=starCount(state.gems);
+  if(starAfter>starBefore)celebrations.push({t:'Ein Stern für deine Krone!',x:'Königin Hanna, dein '+starAfter+'. Stern funkelt jetzt auf der Krone in der Schatzkammer.'});
   var today=todayStr();
   if(state.daily.date!==today){state.daily={date:today,count:0};}
   state.daily.count++;
+  if(state.daily.count>(state.bestDay||0))state.bestDay=state.daily.count;
   if(state.daily.count===GOAL&&state.lastCrownDate!==today){
     state.streak=(state.lastCrownDate===yesterdayStr())?state.streak+1:1;
     state.lastCrownDate=today;
+    if(state.streak>(state.bestStreak||0))state.bestStreak=state.streak;
     celebrations.push({t:'Tageskrone erobert!',x:'20 Juwelen an einem Tag — dein Kronen-Kalender wächst: '+state.streak+' '+(state.streak===1?'Tag':'Tage')+'!'});
   }
   save();
@@ -701,11 +940,18 @@ function check(){
     t.st=t.revealed?'fixed':'right';
     if(!t.revealed&&t.isBase)R.score++;
     if(t.sym==='·'&&!t.revealed){var k=malKey(t.a,t.b);if(state.weak[k]){state.weak[k]--;if(state.weak[k]<=0)delete state.weak[k];}}
+    /* Blitzserie: nur zählen, wenn ohne Tipp und ohne Fehlversuch gelöst */
+    if(!t.revealed&&!t.hinted&&t.attempts===0){
+      state.chain=(state.chain||0)+1;
+      if(state.chain>(state.bestChain||0))state.bestChain=state.chain;
+    }else state.chain=0;
     addGem();sCorrect();flashPraise();renderDots();
     lock=true;
     setTimeout(function(){lock=false;nextTask();},780);
   }else{
-    t.attempts++;sWrong();
+    t.attempts++;
+    if(state.chain){state.chain=0;save();}
+    sWrong();
     var task=$('#task');task.classList.remove('shake');void task.offsetWidth;task.classList.add('shake');
     if(t.attempts===1){
       if(!R.test)openHint(t,false);
@@ -721,7 +967,11 @@ function nextTask(){
 }
 function revealSolution(t){
   t.revealed=true;t.st='wrong';renderDots();
-  if(t.sym==='·'){var k=malKey(t.a,t.b);state.weak[k]=Math.min(8,(state.weak[k]||0)+2);save();}
+  if(t.sym==='·'){
+    var k=malKey(t.a,t.b);state.weak[k]=Math.min(8,(state.weak[k]||0)+2);
+    if(weakCount()>(state.weakEver||0))state.weakEver=weakCount();
+    save();
+  }
   if(!R.test&&t.isBase&&R.queue.length<14){
     var c=mk(t.mode,t.lvl,t.a,t.sym,t.b,t.ans);c.isBase=false;
     R.queue.push(c);
@@ -792,6 +1042,7 @@ function hintHTML(t,withSol){
   return body;
 }
 function openHint(t,withSol){
+  t.hinted=true;state.chain=0;
   var p=$('#hintPanel');
   p.innerHTML=hintHTML(t,withSol);
   p.classList.add('show');
@@ -829,7 +1080,7 @@ function endRound(){
     won=crownsFor(R.score);
     if(won>state.crowns[R.mode][R.lvl])state.crowns[R.mode][R.lvl]=won;
     nextOpen=R.lvl<4&&unlocked(R.mode,R.lvl+1);
-  }
+  }else if(R.score>(state.mixBest||0))state.mixBest=R.score;
   save();
   var ch='';
   for(var i=0;i<3;i++){
@@ -851,6 +1102,17 @@ function runCelebrations(){
   if(!celebrations.length)return;
   var c=celebrations.shift();
   if(!c){runCelebrations();return;}
+  var bd=$('#veilBadge');
+  if(c.badge){
+    bd.innerHTML=c.badge.e;
+    bd.style.display='';
+    bd.style.color=c.badge.c;
+    bd.style.borderColor=c.badge.c;
+    $('#veilCrown').style.display='none';
+  }else{
+    bd.style.display='none';
+    $('#veilCrown').style.display='';
+  }
   $('#veilTitle').textContent=c.t;
   $('#veilText').textContent=c.x;
   $('#veil').classList.add('show');
@@ -858,7 +1120,9 @@ function runCelebrations(){
 }
 $('#veilBtn').addEventListener('click',function(){
   $('#veil').classList.remove('show');
-  runCelebrations();
+  if(celebrations.length)runCelebrations();
+  else if($('#screen-kammer').classList.contains('active'))renderKammer();
+  else if($('#screen-home').classList.contains('active'))renderHome();
 });
 
 /* ---------- Confetti & stars ---------- */
@@ -1155,6 +1419,7 @@ $('#lsNext').addEventListener('click',function(){
 });
 $('#btnLessonBack').addEventListener('click',renderSchool);
 $('#btnSchool').addEventListener('click',renderSchool);
+$('#btnKammer').addEventListener('click',renderKammer);
 var hasSpeech=('speechSynthesis' in window);
 if(!hasSpeech)$('#btnSpeak').style.display='none';
 $('#btnSpeak').addEventListener('click',function(){
@@ -1234,7 +1499,11 @@ $('#btnImport').addEventListener('click',function(){
   }
 });
 
+initKammer();
+/* Beim Öffnen immer abgleichen — z.B. wenn der Fortschritt per Code-Import kam. */
+if(scanBadges(false))save();
 renderHome();
+runCelebrations();
 syncPull();
 })();
 </script>
