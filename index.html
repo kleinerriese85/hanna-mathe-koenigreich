@@ -114,8 +114,6 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
 .arow .one{width:9px; height:9px;}
 .gobtn{margin-top:8px; background:linear-gradient(180deg,var(--gold),var(--gold-deep)); color:#231708; border:none; border-radius:14px; padding:11px 22px; font-size:16px; font-weight:900;}
 
-.tiprow{text-align:center; margin-bottom:6px;}
-.tipbtn{background:none; border:1px solid var(--line); border-radius:99px; padding:7px 16px; font-size:14px; color:var(--ink-dim);}
 
 .numpad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:auto; padding-top:10px;}
 .key{height:clamp(54px,8.5vh,64px); border-radius:16px; border:1px solid var(--line); background:var(--panel); font-size:26px; font-weight:800; transition:transform .08s ease; font-variant-numeric:tabular-nums;}
@@ -356,7 +354,6 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
       <div class="praise" id="praise"></div>
       <div class="task" id="task"></div>
     </div>
-    <div class="tiprow"><button class="tipbtn" id="btnHint">Tipp anzeigen</button></div>
     <div class="hint" id="hintPanel"></div>
     <div class="numpad" id="numpad">
       <button class="key" data-d="1">1</button><button class="key" data-d="2">2</button><button class="key" data-d="3">3</button>
@@ -463,6 +460,7 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
     </div>
     <div class="card psec">
       <p class="pnote"><b>So ist das Spiel aufgebaut:</b> Jeder Weg hat 5 Level, die aufeinander aufbauen. Ein neues Level öffnet sich ab 2 Kronen (7 von 10 richtig). Hat sie in allen 5 Leveln eines Wegs 2 Kronen, wartet die <b>Prüfung</b>: 12 Aufgaben quer durch den Weg, ohne Tipps, bestanden ab 10 richtigen — so wird das Gelernte nochmal bestätigt. Empfohlener Einstieg: <b>Minus Level 1–2</b> (der Zehner-Sprung, z.&nbsp;B. 57&nbsp;−&nbsp;20) und <b>Mal Level 1</b>. Tagesziel sind 20 Juwelen — das sind etwa 2 Runden, also 10–15 Minuten.</p>
+      <p class="pnote" style="margin-top:8px"><b>Tipps kann sie nicht mehr selbst anfordern.</b> Sie erscheinen nur noch automatisch, wenn sie sich vertan hat: erst der Rechenweg, beim zweiten Fehlversuch die Lösung — und die Aufgabe kommt später in derselben Runde nochmal. So bleibt die Hilfe da, wo sie hingehört, ohne dass sie vorab hineinschauen kann.</p>
     </div>
     <div class="card psec">
       <p class="pnote"><b>Die Schatzkammer</b> ist die Sammel-Ansicht: 5 Ränge, 24 Abzeichen und alle 45 Kronen an einem Ort — erreichte in Farbe, offene als Schloss mit Bedingung. Das ist bewusst so gebaut, dass die Lücken sichtbar sind: Ein leerer Platz „Saphir-Meisterin" zieht sie zum Minus-Weg, ein leeres Zauberschul-Regal in die Lektionen. Wenn du sie lenken willst, zeig ihr dort das nächste erreichbare Abzeichen. Ab <b>Mathe-Königin</b> (550 Juwelen) geht es weiter mit Sternen auf der Krone — einer je 250 Juwelen, damit nach dem Titel kein Leerlauf entsteht.</p>
@@ -1215,7 +1213,6 @@ function renderTask(){
   R.input='';
   $('#task').innerHTML=t.a+' <span class="sym">'+t.sym+'</span> '+t.b+' <span class="sym">=</span> <span class="ansSlot" id="ansSlot">?</span>';
   $('#hintPanel').className='hint';$('#hintPanel').innerHTML='';
-  $('#btnHint').style.display=R.test?'none':'';
   renderDots();
 }
 function renderAnswer(){
@@ -1394,7 +1391,6 @@ function openHint(t,withSol){
   var p=$('#hintPanel');
   p.innerHTML=hintHTML(t,withSol);
   p.classList.add('show');
-  $('#btnHint').style.display='none';
   if(withSol){
     $('#btnGo').addEventListener('click',function(){lock=false;nextTask();});
   }
@@ -2037,7 +2033,6 @@ $('#btnAgain').addEventListener('click',function(){startRound(R.mode,R.lvl);});
 $('#btnNextLvl').addEventListener('click',function(){startRound(R.mode,R.lvl+1);});
 $('#btnHome2').addEventListener('click',renderHome);
 $('#btnSchoolHint').addEventListener('click',renderSchool);
-$('#btnHint').addEventListener('click',function(){if(R)openHint(R.queue[R.idx],false);});
 document.querySelectorAll('.key[data-d]').forEach(function(k){
   k.addEventListener('click',function(){tap(k.dataset.d);});
 });
