@@ -485,6 +485,13 @@ h1{font-size:clamp(24px,6.5vw,30px); font-weight:900; text-align:center; margin:
       <table class="ptable"><thead><tr><th>Level</th><th>Aufgaben</th><th>Quote</th></tr></thead><tbody id="statsBody"></tbody></table>
     </div>
     <div class="card psec">
+      <p class="pnote"><b>Kronen-Serie</b> — <span id="streakInfo"></span></p>
+      <p class="pnote" style="margin-top:8px">Bis zu <b>zwei ausgelassene Tage</b> reißen die Serie nicht ab. War die Pause länger oder hat sie ohne App geübt (auf Papier, im Kopf, in der Schule), kannst du die Serie hier am Leben halten — die nächste Runde zählt dann wieder als Fortsetzung.</p>
+      <div class="dlgbtns" style="justify-content:flex-start; margin-top:8px">
+        <button class="btn" id="btnStreakSave">Ohne App geübt — Serie sichern</button>
+      </div>
+    </div>
+    <div class="card psec">
       <p class="pnote"><b>Einmaleins-Übungsschatz</b> — diese Aufgaben übt das Spiel gerade besonders oft:</p>
       <div class="weakchips" id="weakList"></div>
     </div>
@@ -538,6 +545,18 @@ var GOAL=20;
 function dstr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function todayStr(){return dstr(new Date());}
 function yesterdayStr(){var d=new Date();d.setDate(d.getDate()-1);return dstr(d);}
+/* Abstand in Tagen zwischen zwei YYYY-MM-DD-Daten. Über UTC gerechnet, damit
+   Sommer-/Winterzeit keinen halben Tag verschluckt. */
+function dayDiff(von,bis){
+  if(!von||!bis)return 9999;
+  var a=von.split('-').map(Number),b=bis.split('-').map(Number);
+  if(a.length!==3||b.length!==3)return 9999;
+  return Math.round((Date.UTC(b[0],b[1]-1,b[2])-Date.UTC(a[0],a[1]-1,a[2]))/86400000);
+}
+/* Schonfrist: bis zu zwei ausgelassene Tage reißen die Kronen-Serie nicht ab.
+   Ein Kind, das mal zwei Tage nicht spielt (oder auf Papier rechnet), soll nicht
+   bei null anfangen — das ist der häufigste Grund, ganz aufzuhören. */
+var STREAK_GRACE=2;
 
 /* ---------- State ---------- */
 var KEY='hannah-mathe-v1';
@@ -1229,10 +1248,16 @@ function gainGem(){
   state.daily.count++;
   if(state.daily.count>(state.bestDay||0))state.bestDay=state.daily.count;
   if(state.daily.count===GOAL&&state.lastCrownDate!==today){
-    state.streak=(state.lastCrownDate===yesterdayStr())?state.streak+1:1;
+    var luecke=dayDiff(state.lastCrownDate,today),gerettet=false;
+    if(state.lastCrownDate&&luecke>=1&&luecke<=1+STREAK_GRACE){
+      state.streak=(state.streak||0)+1;
+      gerettet=luecke>1;
+    }else state.streak=1;
     state.lastCrownDate=today;
     if(state.streak>(state.bestStreak||0))state.bestStreak=state.streak;
-    celebrations.push({t:'Tageskrone erobert!',x:'20 Juwelen an einem Tag — dein Kronen-Kalender wächst: '+state.streak+' '+(state.streak===1?'Tag':'Tage')+'!'});
+    celebrations.push({t:'Tageskrone erobert!',x:gerettet
+      ?'Du warst '+(luecke-1)+' '+(luecke-1===1?'Tag':'Tage')+' nicht da — deine Serie läuft trotzdem weiter: '+state.streak+' '+(state.streak===1?'Tag':'Tage')+'!'
+      :'20 Juwelen an einem Tag — dein Kronen-Kalender wächst: '+state.streak+' '+(state.streak===1?'Tag':'Tage')+'!'});
   }
   save();
 }
@@ -1508,8 +1533,31 @@ function renderParents(){
     ?wk.map(function(k){var p=k.split('x');return '<span class="wchip">'+p[0]+' · '+p[1]+'</span>';}).join('')
     :'<span class="pnote">Gerade keine — alles sitzt!</span>';
   updateSyncInfo();
+  renderStreakInfo();
   show('screen-parents');
 }
+function renderStreakInfo(){
+  var el=$('#streakInfo');if(!el)return;
+  var heute=todayStr(),lcd=state.lastCrownDate,l=dayDiff(lcd,heute);
+  if(!lcd){el.textContent='noch keine Tageskrone geholt.';return;}
+  if(l<=0)el.innerHTML='<b>'+state.streak+'</b> '+(state.streak===1?'Tag':'Tage')+' · heute schon geschafft.';
+  else if(l<=1+STREAK_GRACE)el.innerHTML='<b>'+state.streak+'</b> '+(state.streak===1?'Tag':'Tage')+' · letzte Krone vor '+l+' '+(l===1?'Tag':'Tagen')+'. Die nächste Runde setzt die Serie fort.';
+  else el.innerHTML='<b>'+state.streak+'</b> '+(state.streak===1?'Tag':'Tage')+' · letzte Krone vor '+l+' Tagen — die Serie würde bei der nächsten Runde neu beginnen.';
+}
+$('#btnStreakSave').addEventListener('click',function(){
+  var heute=todayStr(),l=dayDiff(state.lastCrownDate,heute);
+  if(state.lastCrownDate&&l<=0){
+    showDialog({title:'Schon gesichert',text:'Sie hat heute bereits eine Tageskrone geholt — die Serie läuft.',okLabel:'Ok',cancel:false});
+    return;
+  }
+  showDialog({title:'Serie sichern?',text:'Die Kronen-Serie bleibt bei '+(state.streak||0)+' '+((state.streak||0)===1?'Tag':'Tagen')+' stehen und die nächste Runde zählt wieder als Fortsetzung. Nutze das nur, wenn sie wirklich ohne App geübt hat.',okLabel:'Ja, sichern',onOk:function(){
+    state.lastCrownDate=yesterdayStr();
+    if(!state.streak)state.streak=1;
+    if(state.streak>(state.bestStreak||0))state.bestStreak=state.streak;
+    save();renderParents();
+    showDialog({title:'Serie gesichert',text:'Die Serie steht bei '+state.streak+' '+(state.streak===1?'Tag':'Tagen')+'. Die nächste Runde macht daraus '+(state.streak+1)+'.',okLabel:'Ok',cancel:false});
+  }});
+});
 $('#btnReset').addEventListener('click',function(){
   showDialog({title:'Alles löschen?',text:'Der ganze Fortschritt wird gelöscht. Das kann nicht rückgängig gemacht werden.',okLabel:'Ja, löschen',onOk:function(){
     state=JSON.parse(JSON.stringify(DEFAULT));save();renderHome();
